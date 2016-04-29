@@ -1,29 +1,25 @@
-import Koa from 'koa';
-import koarouter from 'koa-router';
+/**
+ * Main server script setup global middleware for Koa
+ */
 
-const router = koarouter();
+const koa = require('koa');
+const koaRouter = require('koa-router');
+const bodyParser = require('koa-bodyparser');
 
-async function getUser(id) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      reject(new Error('fel' + id));
-    }, 2000);
-  });
-}
+//  const co = require('co');
 
-const app = new Koa();
+const router = koaRouter();
+const app = new koa();
 
-router.get('/', async (next) => {
-  try {
-    const user = await getUser(2);
+// Handle broken JSON bodies
+app.use(bodyParser({
+  onerror: (err, ctx) => {
+    ctx.status = 400;
+    ctx.body = {message: 'Invalid request body'};
+  },
+}));
 
-    next();
-    console.log('fetched user' + user);
-  } catch (e) {
-    console.log('Could not fetch users', e.message);
-  }
-
-});
+router.use('/categories', require('./routes/categories'));
 
 app
   .use(router.routes())

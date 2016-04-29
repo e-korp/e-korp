@@ -26,11 +26,9 @@
   "env": {
     "node": true,
     "es6": true,
+    "mocha": true
   },
   "parser": "babel-eslint",
-  "plugins": [
-    "babel"
-  ],
   "rules": {
 
     /*Possible Errors */
@@ -149,7 +147,7 @@
     "computed-property-spacing": 0,
     "consistent-this": 0,
     "eol-last": 1,
-    "func-names": 1,
+    "func-names": 0,
     "func-style": 0,
     "indent": [1, 2],
     "key-spacing": [1, { "beforeColon": false, "afterColon": true }],
@@ -204,12 +202,6 @@
     "max-params": 0,
     "max-statements": 0,
     "no-bitwise": 1,
-    "no-plusplus": 1,
-
-    /* Babel */
-    "babel/object-shorthand": [1, "always"],
-    "babel/generator-star-spacing": [1, "after"],
-    "babel/new-cap": 1,
-    "babel/object-curly-spacing": [1, "always"]
+    "no-plusplus": 1
   }
 }

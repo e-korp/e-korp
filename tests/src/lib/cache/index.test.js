@@ -9,15 +9,15 @@ const should = chai.should();
 
 // Use require to be able to clear the require cache (clear module state after
 // each test)
-let cache = require('../../../../src/lib/cache/cache');
+let cache = require('../../../../src/lib/cache');
 
 const decache = require('decache');
 
 describe('Cache test', () => {
 
   beforeEach(() => {
-    decache('../../../../src/lib/cache/cache');
-    cache = require('../../../../src/lib/cache/cache');
+    decache('../../../../src/lib/cache');
+    cache = require('../../../../src/lib/cache');
   });
 
   describe('Add', () => {

@@ -5,6 +5,8 @@
 const koa = require('koa');
 const koaRouter = require('koa-router');
 const bodyParser = require('koa-bodyparser');
+const winston = require('winston');
+const applog = winston.loggers.get('applog');
 
 //  const co = require('co');
 
@@ -26,5 +28,6 @@ app
   .use(router.allowedMethods());
 
 
-console.log('Serving at 3000');
+// TODO: Move port selection to .env file
+applog.info('Server listening on port 3000');
 app.listen(3000);

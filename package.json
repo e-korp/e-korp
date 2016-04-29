@@ -25,7 +25,8 @@
     "koa-router": "^5.4.0",
     "mkdirp": "^0.5.1",
     "mongoose": "^4.4.13",
-    "node-fetch": "^1.5.1"
+    "node-fetch": "^1.5.1",
+    "winston": "^2.2.0"
   },
   "devDependencies": {
     "babel-eslint": "^6.0.4",

@@ -1,4 +1,7 @@
 const fetch = require('node-fetch'); // For currency API calls
+const winston = require('winston');
+const tasklog = winston.loggers.get('tasklog');
+
 
 /**
  * Currency converter module
@@ -38,7 +41,7 @@ let latestCurrencyUpdate = null;
 const CONFIG = {
   API_URL: 'https://api.fixer.io/latest', // API to load currency data from
   BASE_CURRENCY: CURRENCIES.EUR,          // Base currency (reference currency)
-  UPDATE_INTERVAL: 3600,                  // Currency refresh interval (seconds)
+  UPDATE_INTERVAL: 55,                    // Currency refresh interval (seconds)
 };
 
 
@@ -67,6 +70,8 @@ const setCurrencyRate = (currencyCode, value) => {
  */
 const mapData = (data) => {
   try {
+    let i = 0;
+
     for (const rate in data.rates) {
       const currencyCode = rate;
       const value = data.rates[currencyCode];
@@ -74,19 +79,29 @@ const mapData = (data) => {
       try {
         setCurrencyRate(currencyCode, value);
       } catch (e) {
-        console.log(e, currencyCode);
+        tasklog.warn(e.message, currencyCode);
       }
+
+      i = i + 1;
     }
 
-    console.log('Currency conversion table was updated:', conversionTable);
+    if (i === 0) {
+      tasklog.error(
+        'No currencies were updated with data',
+        JSON.stringify(data)
+      );
+    }
+
+    tasklog.info('Currency conversion table was updated', conversionTable);
   } catch (e) { // Catch if 'rates' with key/value doesnt exist (broken api)
-    // TODO: Add some monitoring mechanism
-    console.log('Possible API failure?', e.stack);
+    tasklog.error(
+      'Could not get currency rates from data',
+      JSON.stringify(data)
+    );
     return;
   }
 
   // Update the last check date
-  // TODO: Read this from the API instead? (when the API was updated)
   latestCurrencyUpdate = new Date();
 };
 
@@ -119,15 +134,25 @@ const getConversionTable = () => {
  */
 const loadNewData = () => {
   fetch(CONFIG.API_URL).then((response) => {
+    if (response.status !== 200) {
+      return Promise.reject(new Error('Status code was not 200'));
+    }
+
+    return Promise.resolve(response);
+  })
+  .then((response) => {
     return response.json(); // Convert to JSON
-  }).then((json) => {
+  })
+  .then((json) => {
     // Map the data to our structure and set the fetch date
     clearConversionTable();
     mapData(json);
     latestCurrencyUpdate = new Date();
   }).catch((err) => {
-    // TODO: Log this error
-    console.log('Currency Converter error: ', err.message);
+    tasklog.error(
+      'Could not get currency values from provided API',
+      err.message
+    );
   });
 };
 
@@ -142,8 +167,7 @@ const run = () => {
 
   setInterval(() => {
     // Fetch new data
-    // TODO: Logging
-    console.log('Fetching new currency data. Latest check was ',
+    tasklog.info('Fetching new currency data. Last check was ' +
       (latestCurrencyUpdate === null ? 'never' : latestCurrencyUpdate));
 
     loadNewData();

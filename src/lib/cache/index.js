@@ -1,5 +1,7 @@
 const CacheEntry = require('./cache-entry');
 const mkdirp = require('mkdirp'); // To create directories recursivly
+const winston = require('winston');
+const tasklog = winston.loggers.get('tasklog');
 
 /**
  * Caching module
@@ -25,7 +27,7 @@ let invalidateInterval;
  */
 const invalidationWatcher = (interval) => {
   setInterval(() => {
-    console.log('Invalidation watcher');
+    tasklog.info('Running cache invalidation');
   }, interval * 1000);
 };
 

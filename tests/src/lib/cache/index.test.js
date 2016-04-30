@@ -13,7 +13,7 @@ let cache = require('../../../../src/lib/cache');
 
 const decache = require('decache');
 
-describe('Cache test', () => {
+describe('Cache', () => {
 
   beforeEach(() => {
     decache('../../../../src/lib/cache');

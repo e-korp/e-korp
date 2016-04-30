@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import CacheEntry from '../../../../src/lib/cache/cache-entry';
 
-describe('Cache entry test', () => {
+describe('Cache entry', () => {
 
   describe('Constructor', () => {
     it('Should set key and data in constructor', () => {

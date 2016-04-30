@@ -40,6 +40,9 @@ app.use(bodyParser({
   },
 }));
 
+
+// Mount sub-routers
+// TODO: Handle this in separate file
 router.use('/categories', require('./routes/categories'));
 
 app
@@ -48,5 +51,5 @@ app
 
 
 // TODO: Move port selection to .env file
-applog.info('Server listening on port 3000');
-app.listen(3000);
+applog.info(`Server listening on port ${process.env.PORT}`);
+app.listen(process.env.PORT);

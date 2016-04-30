@@ -20,6 +20,7 @@
   "homepage": "https://github.com/e-korp/e-korp#readme",
   "dependencies": {
     "co": "^4.6.0",
+    "dotenv": "^2.0.0",
     "koa": "^2.0.0",
     "koa-bodyparser": "^2.0.1",
     "koa-router": "^5.4.0",

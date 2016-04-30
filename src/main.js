@@ -2,11 +2,27 @@
  * Application entry point
  */
 
-// Initiate the logging
+
+/**
+ *  Setup environment variables
+ */
+const envir = require('./environment');
+
+// Load environment variables from .env file
+envir.load();
+
+// Apply fallback values for environment variables
+envir.applyFallback();
+
+
+/**
+ * Initiate the logging
+ */
 require('./logging');
 
 const winston = require('winston');
 const applog = winston.loggers.get('applog');
+
 
 /**
  * Create required directories
@@ -16,6 +32,7 @@ applog.info('Creating required directories');
 const mkdirp = require('mkdirp');
 
 mkdirp('logs');
+
 
 /**
  * Setup internal cache

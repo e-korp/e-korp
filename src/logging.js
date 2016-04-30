@@ -29,6 +29,19 @@ winston.loggers.add('applog', {
   },
 });
 
+// Configure the access logger
+winston.loggers.add('accesslog', {
+  console: {
+    level: 'info',
+    colorize: true,
+    label: 'Access log',
+  },
+  file: {
+    level: 'info',
+    filename: './logs/access.log',
+  },
+});
+
 // Report in that the logging is working
 const applog = winston.loggers.get('applog');
 applog.info('Logging setup successfully');

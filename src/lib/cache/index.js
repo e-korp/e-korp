@@ -19,16 +19,28 @@ let cacheStore = {};
 let cachedir;
 let invalidateInterval;
 
+let invalidationWatcherId;
+
 /**
  * Keeps the cache clean by removing expired entries
  * @author Johan Kanefur <johan.canefur@gmail.com>
  * @param  {interger} interval How often to clean the cache (seconds)
  * @return {void}
  */
-const invalidationWatcher = (interval) => {
-  setInterval(() => {
+const startInvalidationWatcher = (interval) => {
+  invalidationWatcherId = setInterval(() => {
     tasklog.info('Running cache invalidation');
   }, interval * 1000);
+};
+
+
+/**
+ * Stops the invalidation watcher
+ * @author Johan Kanefur <johan.canefur@gmail.com>
+ * @return {void}
+ */
+const stopInvalidationWatcher = () => {
+  clearInterval(invalidationWatcherId);
 };
 
 
@@ -51,8 +63,7 @@ const setup = (cachedir = './', invalidateInterval = 60) => {
     });
 
     // Run the checker
-    invalidationWatcher(invalidateInterval);
-
+    startInvalidationWatcher(invalidateInterval);
     resolve();
   });
 };
@@ -106,27 +117,45 @@ const get = (key) => {
 
 /**
  * Clear the cache for a tag
- * @todo Implement this
  * @author Johan Kanefur <johan.canefur@gmail.com>
  * @param  {string} tag  The tag to clear
  * @return {integer}     Number of entries that got removed
  */
 const invalidateByTag = (tag) => {
-  return new Promise((resolve, reject) => {
-    resolve(29);
+  return new Promise((resolve) => {
+    let removedEntries = 0;
+
+    for (const key in cacheStore) {
+      // Check if the tags exists
+      if (cacheStore[key].tags.indexOf(tag) !== -1) {
+        // The tag exists, remove this entry from cache store
+        delete cacheStore[key];
+        removedEntries = removedEntries + 1;
+      }
+    }
+
+    resolve(removedEntries);
   });
 };
 
+
 /**
  * Gets all cache entries with a specific tag
- * @todo Implement this
  * @author Johan Kanefur <johan.canefur@gmail.com>
  * @param  {string} tag The tag to find entries for
  * @return {array}      List of cache entries matching the tag
  */
 const getEntriesByTag = (tag) => {
-  return new Promise((resolve, reject) => {
-    resolve([]);
+  return new Promise((resolve) => {
+    const foundEntries = [];
+
+    for (const key in cacheStore) {
+      if (cacheStore[key].tags.indexOf(tag) !== -1) {
+        foundEntries.push(cacheStore[key]);
+      }
+    }
+
+    resolve(foundEntries);
   });
 };
 
@@ -157,6 +186,8 @@ module.exports = {
   add: add,
   exists: exists,
   get: get,
+  startInvalidationWatcher: startInvalidationWatcher,
+  stopInvalidationWatcher: stopInvalidationWatcher,
   invalidateByTag: invalidateByTag,
   getEntriesByTag: getEntriesByTag,
   exportStore: exportStore,

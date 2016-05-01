@@ -1,6 +1,6 @@
 class CacheEntry {
 
-  constructor(key, data, tags, ttl) {
+  constructor(key, data, tags = [], ttl) {
     this._key = key;
     this._data = data;
     this._tags = tags;

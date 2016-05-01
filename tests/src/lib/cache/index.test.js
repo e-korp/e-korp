@@ -61,8 +61,32 @@ describe('Cache', () => {
     });
   });
 
-  it('Should set context', () => {
-    expect(true).to.equal(true);
+  describe('Invalidate entries by tag', () => {
+    it('Should invalidate entries matching the supplied tag', () => {
+      cache.add('mykey', 'mydata', ['image', 'html']);
+      return cache.invalidateByTag('image').then(() => {
+        return cache.exists('mykey').should.eventually.equal(false);
+      });
+    });
+
+    it('Should return the amount of entries removed', () => {
+      cache.add('mykey', 'mydata', ['image', 'html']);
+      cache.add('mykey2', 'mydata', ['image', 'random']);
+      return cache.invalidateByTag('image').should.eventually.equal(2);
+    });
   });
+
+  describe('Get entries by tag', () => {
+    it('Should get entries matching the supplied tag', () => {
+      cache.add('mykey', 'mydata', ['image', 'html']);
+      cache.add('mykey2', 'mydata', ['text', 'image']);
+      return cache.getEntriesByTag('image').then((entries) => {
+        expect(entries.length).to.equal(2);
+        expect(entries[0].key).to.equal('mykey');
+        expect(entries[1].key).to.equal('mykey2');
+      });
+    });
+  });
+
 
 });

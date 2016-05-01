@@ -29,6 +29,8 @@ let invalidationWatcherId;
  */
 const startInvalidationWatcher = (interval) => {
   invalidationWatcherId = setInterval(() => {
+    //
+
     tasklog.info('Running cache invalidation');
   }, interval * 1000);
 };
@@ -53,19 +55,18 @@ const stopInvalidationWatcher = () => {
  * @return {void}
  */
 const setup = (cachedir = './', invalidateInterval = 60) => {
-  return new Promise((resolve, reject) => {
-    cachedir = cachedir;
-    invalidateInterval = invalidateInterval;
+  cachedir = cachedir;
+  invalidateInterval = invalidateInterval;
 
-    // Create the caching direcory if it doesnt exist
-    mkdirp(cachedir, (err) => {
-      return reject(err);
-    });
-
-    // Run the checker
-    startInvalidationWatcher(invalidateInterval);
-    resolve();
+  // Create the caching direcory if it doesnt exist
+  mkdirp(cachedir, (err) => {
+    if (err) {
+      tasklog.error(err);
+    }
   });
+
+  // Run the checker
+  startInvalidationWatcher(invalidateInterval);
 };
 
 
@@ -80,10 +81,8 @@ const setup = (cachedir = './', invalidateInterval = 60) => {
  * @return {boolean}      True on success
  */
 const add = (key, data, tags = ['global'], ttl = 3600) => {
-  return new Promise((resolve) => {
-    cacheStore[key] = new CacheEntry(key, data, tags, ttl);
-    resolve(true);
-  });
+  tasklog.info('Adding to cache');
+  cacheStore[key] = new CacheEntry(key, data, tags, ttl);
 };
 
 
@@ -94,7 +93,7 @@ const add = (key, data, tags = ['global'], ttl = 3600) => {
  * @return {boolean}    True if the key exists, false otherwise
  */
 const exists = (key) => {
-  return Promise.resolve(key in cacheStore);
+  return (key in cacheStore);
 };
 
 
@@ -105,13 +104,12 @@ const exists = (key) => {
  * @return {mixed}      Data stored in the entry
  */
 const get = (key) => {
-  return new Promise((resolve, reject) => {
-    if (key in cacheStore) {
-      return resolve(cacheStore[key].data);
-    }
+  if (key in cacheStore) {
+    tasklog.info('Fetching from cache');
+    return cacheStore[key].data;
+  }
 
-    return reject(new Error('Key not found in cache'));
-  });
+  throw new Error('Key not found in cache');
 };
 
 
@@ -122,20 +120,18 @@ const get = (key) => {
  * @return {integer}     Number of entries that got removed
  */
 const invalidateByTag = (tag) => {
-  return new Promise((resolve) => {
-    let removedEntries = 0;
+  let removedEntries = 0;
 
-    for (const key in cacheStore) {
-      // Check if the tags exists
-      if (cacheStore[key].tags.indexOf(tag) !== -1) {
-        // The tag exists, remove this entry from cache store
-        delete cacheStore[key];
-        removedEntries = removedEntries + 1;
-      }
+  for (const key in cacheStore) {
+    // Check if the tags exists
+    if (cacheStore[key].tags.indexOf(tag) !== -1) {
+      // The tag exists, remove this entry from cache store
+      delete cacheStore[key];
+      removedEntries = removedEntries + 1;
     }
+  }
 
-    resolve(removedEntries);
-  });
+  return removedEntries;
 };
 
 
@@ -146,17 +142,15 @@ const invalidateByTag = (tag) => {
  * @return {array}      List of cache entries matching the tag
  */
 const getEntriesByTag = (tag) => {
-  return new Promise((resolve) => {
-    const foundEntries = [];
+  const foundEntries = [];
 
-    for (const key in cacheStore) {
-      if (cacheStore[key].tags.indexOf(tag) !== -1) {
-        foundEntries.push(cacheStore[key]);
-      }
+  for (const key in cacheStore) {
+    if (cacheStore[key].tags.indexOf(tag) !== -1) {
+      foundEntries.push(cacheStore[key]);
     }
+  }
 
-    resolve(foundEntries);
-  });
+  return foundEntries;
 };
 
 

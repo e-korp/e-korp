@@ -8,6 +8,7 @@ const Category = require('../resources/category');
 
 
 router.get('/', co.wrap(function *(next) {
+
   const categories = yield Category.getCategoryList();
 
   this.status = 200;

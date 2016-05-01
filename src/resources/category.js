@@ -24,14 +24,27 @@ class Category extends Resource {
    * @author Johan Kanefur <johan.canefur@gmail.com>
    */
   getCategoryList() {
-    return [
+    const cacheKey = 'categoryList';
+
+    console.log('snopp');
+
+    // Look for the result in the cache
+    if (this.cache.exists(cacheKey)) {
+      return this.cache.get(cacheKey);
+    }
+
+    const categoryData = [
       {
-        name: 'Category 1',
+        name: 'Category 1sdsd',
       },
       {
         name: 'Category 2',
       },
     ];
+
+    this.cache.add(cacheKey, categoryData, ['category'], 60);
+
+    return categoryData;
   }
 
 }

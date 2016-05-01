@@ -5,7 +5,7 @@ class CacheEntry {
     this._data = data;
     this._tags = tags;
     this._ttl = ttl;
-    this._date = new Date();
+    this._date = new Date().getTime() / 1000;
   }
 
   /**

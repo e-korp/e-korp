@@ -30,12 +30,12 @@ describe('Cache', () => {
 
   describe('Exists', () => {
     it('Should return false if the cache key doesnt exists', () => {
-      return cache.exists('bullshitkey').should.eventually.be.false;
+      expect(cache.exists('bullshitkey')).to.be.false;
     });
 
     it('Should return true if the cache key exists', () => {
       cache.add('mykey', 'mydata');
-      return cache.exists('mykey').should.eventually.be.true;
+      expect(cache.exists('mykey')).to.be.true;
     });
 
     it('Should set default ttl', () => {
@@ -50,29 +50,27 @@ describe('Cache', () => {
   });
 
   describe('Get', () => {
-    it('Should reject promise if key is not found', () => {
-      return cache.get('weirdkey').should.be
-        .rejectedWith('Key not found in cache');
+    it('Should throw error if key is not found', () => {
+      expect(() => cache.get('weirdkey')).to.throw('Key not found in cache');
     });
 
-    it('Should resolve the stored data', () => {
+    it('Should return the stored data', () => {
       cache.add('mykey', 'mydata');
-      return cache.get('mykey').should.eventually.equal('mydata');
+      expect(cache.get('mykey')).to.equal('mydata');
     });
   });
 
   describe('Invalidate entries by tag', () => {
     it('Should invalidate entries matching the supplied tag', () => {
       cache.add('mykey', 'mydata', ['image', 'html']);
-      return cache.invalidateByTag('image').then(() => {
-        return cache.exists('mykey').should.eventually.equal(false);
-      });
+      cache.invalidateByTag('image');
+      expect(cache.exists('mykey')).to.equal(false);
     });
 
     it('Should return the amount of entries removed', () => {
       cache.add('mykey', 'mydata', ['image', 'html']);
       cache.add('mykey2', 'mydata', ['image', 'random']);
-      return cache.invalidateByTag('image').should.eventually.equal(2);
+      expect(cache.invalidateByTag('image')).to.equal(2);
     });
   });
 
@@ -80,11 +78,10 @@ describe('Cache', () => {
     it('Should get entries matching the supplied tag', () => {
       cache.add('mykey', 'mydata', ['image', 'html']);
       cache.add('mykey2', 'mydata', ['text', 'image']);
-      return cache.getEntriesByTag('image').then((entries) => {
-        expect(entries.length).to.equal(2);
-        expect(entries[0].key).to.equal('mykey');
-        expect(entries[1].key).to.equal('mykey2');
-      });
+      const entries = cache.getEntriesByTag('image');
+      expect(entries.length).to.equal(2);
+      expect(entries[0].key).to.equal('mykey');
+      expect(entries[1].key).to.equal('mykey2');
     });
   });
 

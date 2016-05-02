@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/main.js",
   "scripts": {
-    "start": "node_modules/.bin/nodemon --use_strict --harmony --harmony_default_parameters --harmony_destructuring src/main.js",
+    "start": "node_modules/.bin/nodemon --use_strict src/main.js",
     "eslint": "./node_modules/.bin/eslint src/**",
     "test": "node_modules/.bin/mocha ./tests/ --recursive --reporter spec --compilers js:babel-register --watch"
   },

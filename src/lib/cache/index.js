@@ -49,14 +49,14 @@ const stopInvalidationWatcher = () => {
 /**
  * Sets up the configuration and starts the invalidation watcher
  * @author Johan Kanefur <johan.canefur@gmail.com>
- * @param  {string}  cachedir            Directory to use for cache files
- * @param  {integer} invalidateInterval  The check interval time to delete
+ * @param  {string}  storedir            Directory to use for cache files
+ * @param  {integer} interval            The check interval time to delete
  *                                       old cache entries
  * @return {void}
  */
-const setup = (cachedir = './', invalidateInterval = 60) => {
-  cachedir = cachedir;
-  invalidateInterval = invalidateInterval;
+const setup = (storedir = './', interval = 60) => {
+  cachedir = storedir;
+  invalidateInterval = interval;
 
   // Create the caching direcory if it doesnt exist
   mkdirp(cachedir, (err) => {
@@ -78,11 +78,14 @@ const setup = (cachedir = './', invalidateInterval = 60) => {
  * @param  {mixed}   data The data to store in the cache entry
  * @param  {array}   tags Tags associated with the cache entry
  * @param  {integer} ttl  Seconds before the entry gets invalid
- * @return {boolean}      True on success
+ * @return {Promise}      True on success
  */
 const add = (key, data, tags = ['global'], ttl = 3600) => {
-  tasklog.info('Adding to cache');
-  cacheStore[key] = new CacheEntry(key, data, tags, ttl);
+  return new Promise((resolve) => {
+    tasklog.info('Adding to cache');
+    cacheStore[key] = new CacheEntry(key, data, tags, ttl);
+    resolve(true);
+  });
 };
 
 
@@ -90,10 +93,12 @@ const add = (key, data, tags = ['global'], ttl = 3600) => {
  * Checks wheter or not the key exists in the cache
  * @author Johan Kanefur <johan.canefur@gmail.com>
  * @param  {string} key The key to lookup
- * @return {boolean}    True if the key exists, false otherwise
+ * @return {Promise}    True if the key exists, false otherwise
  */
 const exists = (key) => {
-  return (key in cacheStore);
+  return new Promise((resolve) => {
+    resolve(key in cacheStore);
+  });
 };
 
 
@@ -101,15 +106,18 @@ const exists = (key) => {
  * Gets a cache entry by key
  * @author Johan Kanefur <johan.canefur@gmail.com>
  * @param  {string} key The key to get data for
- * @return {mixed}      Data stored in the entry
+ * @return {Promise}      Data stored in the entry
  */
 const get = (key) => {
-  if (key in cacheStore) {
-    tasklog.info('Fetching from cache');
-    return cacheStore[key].data;
-  }
+  return new Promise((resolve, reject) => {
+    if (key in cacheStore) {
+      tasklog.info('Fetching from cache');
 
-  throw new Error('Key not found in cache');
+      return resolve(cacheStore[key].data);
+    }
+
+    return reject(new Error('Key not found in cache'));
+  });
 };
 
 
@@ -117,21 +125,23 @@ const get = (key) => {
  * Clear the cache for a tag
  * @author Johan Kanefur <johan.canefur@gmail.com>
  * @param  {string} tag  The tag to clear
- * @return {integer}     Number of entries that got removed
+ * @return {Promise}     Number of entries that got removed
  */
 const invalidateByTag = (tag) => {
-  let removedEntries = 0;
+  return new Promise((resolve) => {
+    let removedEntries = 0;
 
-  for (const key in cacheStore) {
-    // Check if the tags exists
-    if (cacheStore[key].tags.indexOf(tag) !== -1) {
-      // The tag exists, remove this entry from cache store
-      delete cacheStore[key];
-      removedEntries = removedEntries + 1;
+    for (const key in cacheStore) {
+      // Check if the tags exists
+      if (cacheStore[key].tags.indexOf(tag) !== -1) {
+        // The tag exists, remove this entry from cache store
+        delete cacheStore[key];
+        removedEntries = removedEntries + 1;
+      }
     }
-  }
 
-  return removedEntries;
+    return resolve(removedEntries);
+  });
 };
 
 
@@ -139,28 +149,32 @@ const invalidateByTag = (tag) => {
  * Gets all cache entries with a specific tag
  * @author Johan Kanefur <johan.canefur@gmail.com>
  * @param  {string} tag The tag to find entries for
- * @return {array}      List of cache entries matching the tag
+ * @return {Promise}      List of cache entries matching the tag
  */
 const getEntriesByTag = (tag) => {
-  const foundEntries = [];
+  return new Promise((resolve) => {
+    const foundEntries = [];
 
-  for (const key in cacheStore) {
-    if (cacheStore[key].tags.indexOf(tag) !== -1) {
-      foundEntries.push(cacheStore[key]);
+    for (const key in cacheStore) {
+      if (cacheStore[key].tags.indexOf(tag) !== -1) {
+        foundEntries.push(cacheStore[key]);
+      }
     }
-  }
 
-  return foundEntries;
+    resolve(foundEntries);
+  });
 };
 
 
 /**
  * Exports the current cache store data
  * @author Johan Kanefur <johan.canefur@gmail.com>
- * @return {object}  The current cache store
+ * @return {Promise}  The current cache store
  */
 const exportStore = () => {
-  return cacheStore;
+  return new Promise((resolve) => {
+    resolve(cacheStore);
+  });
 };
 
 
@@ -168,10 +182,13 @@ const exportStore = () => {
  * Sets the cache store
  * @author Johan Kanefur <johan.canefur@gmail.com>
  * @param  {object} store   The data object to set
- * @return {void}
+ * @return {Promise}        -
  */
 const importStore = (store) => {
-  cacheStore = store;
+  return new Promise((resolve) => {
+    cacheStore = store;
+    resolve();
+  });
 };
 
 

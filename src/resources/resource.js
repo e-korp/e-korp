@@ -6,17 +6,23 @@
  */
 
 const cache = require('../lib/cache');
+const md5 = require('md5');
 
 class Resource {
 
   constructor() {
-
     // Holds cache singleton
     this._cache = cache;
   }
 
-  getCacheKey(caller) {
-    return __dirname + __filename + caller;
+  /**
+   * Creates hash key for entities
+   * @author Johan Kanefur <johan.canefur@gmail.com>
+   * @param  {string} entityIdentifier Identifier for which method
+   * @return {string}                  32 char long MD5 hash
+   */
+  getCacheKey(entityIdentifier) {
+    return md5(__dirname + __filename + entityIdentifier);
   }
 
   /**

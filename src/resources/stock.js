@@ -1,4 +1,5 @@
 const Resource = require('./resource');
+const StockModel = require('../models/stock');
 
 class Stock extends Resource {
 
@@ -13,7 +14,7 @@ class Stock extends Resource {
    * @param  {string} productId The product ID to get stock for
    * @return {void}
    */
-  getStockForProduct(productId) {
+  getStock(productId) {
     return productId;
   }
 

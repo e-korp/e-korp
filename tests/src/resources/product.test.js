@@ -29,6 +29,41 @@ describe('Product', () => {
       p.attributes = l;
       expect(p.attributes).to.deep.equal(l);
     });
+
+    it('Should set and get materials', () => {
+      const p = new Product();
+      const l = 'materials';
+      p.materials = l;
+      expect(p.materials).to.equal(l);
+    });
+
+    it('Should set and get description', () => {
+      const p = new Product();
+      const l = 'description';
+      p.description = l;
+      expect(p.description).to.equal(l);
+    });
+
+    it('Should set and get shortdescription', () => {
+      const p = new Product();
+      const l = 'shortdescription';
+      p.shortdescription = l;
+      expect(p.shortdescription).to.equal(l);
+    });
+
+    it('Should set and get size', () => {
+      const p = new Product();
+      const l = 'size';
+      p.size = l;
+      expect(p.size).to.equal(l);
+    });
+
+    it('Should set and get colors', () => {
+      const p = new Product();
+      const l = ['color1', 'color2'];
+      p.colors = l;
+      expect(p.colors).to.deep.equal(l);
+    });
   });
 
   describe('Default attributes', () => {

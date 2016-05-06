@@ -30,9 +30,9 @@ class Product extends Resource {
    * the model?
    * @todo Test
    * @author Johan Kanefur <johan.canefur@gmail.com>
-   * @param  {string} id The product ID to load from
-   * @return {Promise}   Rejecting promise if the product couldnt load,
-   *                     resolving promise if the product loaded correctly
+   * @param  {string}         id The product ID to load from
+   * @return {Promise}        Rejecting promise if the product couldnt load,
+   *                          resolving promise if the product loaded correctly
    */
   load(id) {
     return new Promise((resolve, reject) => {
@@ -52,6 +52,26 @@ class Product extends Resource {
           reject(err);
         });
       });
+    });
+  }
+
+
+  /**
+   * Map loaded data into this object. Acts like a bridge between the model and
+   * this resource
+   * @author Johan Kanefur <johan.canefur@gmail.com>
+   * @param  {object} data Data object to map
+   * @return {void}
+   */
+  map(data) {
+    this._name = data.name;
+    this._materials = data.materials;
+  }
+
+
+  getById(id) {
+    return this.load(id).then((data) => {
+      return this.map(data);
     });
   }
 

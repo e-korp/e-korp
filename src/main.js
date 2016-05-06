@@ -25,6 +25,12 @@ const applog = winston.loggers.get('applog');
 
 
 /**
+ * Setup database connection
+ */
+require('./database');
+
+
+/**
  * Create required directories
  */
 applog.info('Creating required directories');
@@ -32,6 +38,19 @@ applog.info('Creating required directories');
 const mkdirp = require('mkdirp');
 
 mkdirp('logs');
+
+
+/**
+ * Seed data into the database
+ */
+if (process.env.SEED) {
+  const seeder = require('./tools/seeder');
+  seeder.seedProducts().then(() => {
+    applog.info('Successfully seeded products');
+  }).catch((err) => {
+    applog.error('Could not seed products', err);
+  });
+}
 
 
 /**

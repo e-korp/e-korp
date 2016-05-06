@@ -5,7 +5,8 @@
 const DEFAULT_ENV = {
   PORT: 3000,
   DEV: true,
-  MONGO: 'mongodb://localhost:27017/e-korp',
+  MONGO_URI: 'mongodb://localhost:27017/e-korp',
+  SEED: false,
 };
 
 
@@ -13,6 +14,7 @@ const DEFAULT_ENV = {
  * Load environment variables from .env
  * This does not overwrite existing environment variables
  * @author Johan Kanefur <johan.canefur@gmail.com>
+ * @returns {void}
  */
 const load = () => {
   // Do not warn to the console about non-existing .env file

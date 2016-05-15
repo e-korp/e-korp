@@ -43,8 +43,11 @@ app.use(bodyParser({
 
 // Mount sub-routers
 // TODO: Handle this in separate file
-router.use('/categories', require('./routes/categories'));
-router.use('/products', require('./routes/products'));
+router.use('/categories', require('./controllers/categories'));
+router.use('/products', require('./controllers/products'));
+
+// For development
+router.use('/cache', require('./controllers/cache'));
 
 app
   .use(router.routes())

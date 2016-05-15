@@ -1,30 +1,88 @@
-const Resource = require('./resource');
-const Attribute = require('./attribute');
+const Collection = require('./collection');
 
 const Product = require('./product');
 const ProductModel = require('../models/product');
 
-
-class ProductCollection extends Resource {
+class ProductCollection extends Collection {
 
   constructor() {
     super();
+  }
 
-    /**
-     * Model for querying data
-     * @type {MongooseModel}
-     */
-    this._model = ProductModel;
+
+  getAll() {
+    return new Promise((resolve, reject) => {
+      const cacheKey = this.getCacheKey('ProductCollection', 'all');
+
+      // Check if the result exists in the cache
+      this.cache.get(cacheKey).then((data) => {
+        for (const rawProduct in data) {
+          const p = new Product();
+          p.map(rawProduct);
+          this.add(p);
+
+          // TODO: Cache every individual product in the list here
+          resolve(this.items);
+        }
+      }).catch((err) => {
+        // The data was not found in the cache load it from the model
+        return ProductModel.find({}).exec().then((results) => {
+          this.cache.add(cacheKey, results, ['product', 'product-collection']);
+
+          for (const rawProduct in results) {
+            const p = new Product();
+            p.map(rawProduct);
+            this.add(p);
+          }
+
+          resolve(this.items);
+        }).catch((modelErr) => {
+          reject(modelErr);
+        });
+      });
+    });
   }
 
 
   /**
    * General querying for products
+   * @todo test this
    */
   query(text, categories = [], from = 0, limit = 20) {
-    this._model.find(/* ... */);
 
-    // TODO: Do similar data mapping as findByIds method
+    const query = {
+      text: text,
+    };
+
+    // Build the cache key for this particular query
+    const cacheKey = this.getCacheKey('ProductCollection', {
+      text: text,
+      categories: categories,
+      from: from,
+      limit: limit,
+    });
+
+    // Check if the result exists in the cache
+    this.cache.get(cacheKey).then((data) => {
+      for (const rawProduct in data) {
+        const p = new Product();
+        p.map(rawProduct);
+        this.add(p);
+      }
+    }).catch((err) => {
+      // The data was not found in the cache load it from the model
+      return ProductModel.find({/* ... */}).exec().then((results) => {
+        this.cache.add(cacheKey, results, ['product', 'product-collection']);
+
+        for (const rawProduct in results) {
+          const p = new Product();
+          p.map(rawProduct);
+          this.add(p);
+        }
+
+        return true;
+      });
+    });
   }
 
 
@@ -36,7 +94,6 @@ class ProductCollection extends Resource {
    *                             failure
    */
   findByIds(productIds) {
-
     // TODO: Check if we already got some products to load from the cache
     return new Promise((resolve, reject) => {
       // TODO: Real mongo query

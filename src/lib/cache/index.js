@@ -80,7 +80,7 @@ const setup = (storedir = './', interval = 60) => {
  * @param  {integer} ttl  Seconds before the entry gets invalid
  * @return {Promise}      True on success
  */
-const add = (key, data, tags = ['global'], ttl = 3600) => {
+const add = (key, data, tags = ['global'], ttl = 100) => {
   return new Promise((resolve) => {
     tasklog.info('Adding to cache');
     cacheStore[key] = new CacheEntry(key, data, tags, ttl);

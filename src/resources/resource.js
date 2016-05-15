@@ -16,13 +16,27 @@ class Resource {
   }
 
   /**
-   * Creates hash key for entities
+   * Helper to create cache key for data
    * @author Johan Kanefur <johan.canefur@gmail.com>
-   * @param  {string} entityIdentifier Identifier for which method
-   * @return {string}                  32 char long MD5 hash
+   * @param  {string} entityName Name of the entity
+   * @param  {mixed}  query      Parameters used to get the data
+   * @return {string}            32 char key
    */
-  getCacheKey(entityIdentifier) {
-    return md5(__dirname + __filename + entityIdentifier);
+  getCacheKey(entityName, query) {
+    if (typeof entityName === 'undefined' || typeof query === 'undefined') {
+      throw new Error('Parameters missing');
+    }
+
+    return md5(entityName.toLowerCase() + query);
+  }
+
+  /**
+   * Returns a plain data object representation of this object
+   * @author Johan Kanefur <johan.canefur@gmail.com>
+   * @return {object} Resulting object
+   */
+  getData() {
+    return {};
   }
 
   /**

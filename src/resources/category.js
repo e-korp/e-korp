@@ -1,52 +1,61 @@
 const Resource = require('./resource');
+const CategoryModel = require('../models/category').model;
 
 class Category extends Resource {
 
   constructor() {
     super();
-  }
 
-  /**
-   * Gets category tree
-   * @author Johan Kanefur <johan.canefur@gmail.com>
-   * @param  {integer} level     The level to start on
-   * @param  {integer} maxDepth  Number of levels to go down
-   * @return {object}            Nested tree strucure of categories
-   */
-  getCategoryTree(level = 0, maxDepth = 100) {
-    return {};
+    this._name = null;
+    this._description = null;
+    this._image = null;
+    this._position = 0;
+    this._parent = null;
   }
 
 
   /**
-   * Example method for testing
-   * @TODO remove this
+   * Saves this category
    * @author Johan Kanefur <johan.canefur@gmail.com>
+   * @param  {string}   name        Name of the category
+   * @param  {string}   description Description of the category
+   * @param  {string}   image       Image for the category
+   * @param  {[integer} position    Position for sorting
+   * @param  {Category} parent      Reference to parent cateogory (null if root)
    */
-  getCategoryList() {
-    const cacheKey = 'categoryList';
+  save(
+    name,
+    description = '',
+    image = null,
+    position = 0,
+    parent = null
+  ) {
+    const c = new CategoryModel({
+      name: name,
+      description: description,
+      image: image,
+      position: position,
+      parent: parent,
+    });
 
-    console.log('snopp');
+    // TODO: Set the last pieces of information in this object (created_at etc)
 
-    // Look for the result in the cache
-    if (this.cache.exists(cacheKey)) {
-      return this.cache.get(cacheKey);
-    }
+    return c.save();
+  }
 
-    const categoryData = [
-      {
-        name: 'Category 1sdsd',
-      },
-      {
-        name: 'Category 2',
-      },
-    ];
 
-    this.cache.add(cacheKey, categoryData, ['category'], 60);
+  /**
+   * Getters and setters
+   */
 
-    return categoryData;
+  get name() {
+    return this._name;
+  }
+
+  set name(name) {
+    this._name = name;
   }
 
 }
 
-module.exports = new Category();
+module.exports = Category;

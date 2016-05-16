@@ -61,7 +61,7 @@ const cache = require('./lib/cache');
 
 cache.setup(
   './cache',  // Directory to store cache files
-  60          // Invalidate interval (seconds)
+  600         // Invalidate interval (seconds)
 );
 
 

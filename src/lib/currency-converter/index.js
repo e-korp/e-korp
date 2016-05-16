@@ -41,7 +41,7 @@ let latestCurrencyUpdate = null;
 const CONFIG = {
   API_URL: 'https://api.fixer.io/latest', // API to load currency data from
   BASE_CURRENCY: CURRENCIES.EUR,          // Base currency (reference currency)
-  UPDATE_INTERVAL: 55,                    // Currency refresh interval (seconds)
+  UPDATE_INTERVAL: 3600,                  // Currency refresh interval (seconds)
 };
 
 

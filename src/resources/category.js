@@ -1,5 +1,5 @@
 const Resource = require('./resource');
-const CategoryModel = require('../models/category').model;
+const CategoryModel = require('../models/category');
 
 class Category extends Resource {
 

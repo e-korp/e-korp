@@ -1,5 +1,6 @@
-import { expect } from 'chai';
-import decache from 'decache';
+const chai = require('chai');
+const expect = chai.expect;
+const decache = require('decache');
 
 let envir = require('../../src/environment');
 

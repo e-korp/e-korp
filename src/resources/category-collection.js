@@ -1,5 +1,5 @@
 const Collection = require('./collection');
-const CategoryModel = require('../models/category').model;
+const CategoryModel = require('../models/category');
 
 class CategoryCollection extends Collection {
 

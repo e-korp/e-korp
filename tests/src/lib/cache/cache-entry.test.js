@@ -1,5 +1,5 @@
-import { expect } from 'chai';
-import CacheEntry from '../../../../src/lib/cache/cache-entry';
+const expect = require('chai').expect;
+const CacheEntry = require('../../../../src/lib/cache/cache-entry');
 
 describe('Cache entry', () => {
 

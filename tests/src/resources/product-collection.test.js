@@ -1,6 +1,5 @@
-import chai from 'chai';
+const chai = require('chai');
 const expect = chai.expect;
-
 
 const ProductCollection = require('../../../src/resources/product-collection');
 

@@ -35,5 +35,4 @@ const productSchema = new Schema({
   timestamps: true,
 });
 
-// TODO: export the schema for extending
 module.exports = mongoose.model('Product', productSchema);

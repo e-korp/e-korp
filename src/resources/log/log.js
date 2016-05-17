@@ -6,7 +6,9 @@ class Log extends Resource {
   constructor() {
     super();
 
-    this._message = null;
+    this._description = null;
+    this._title = null;
+    this._stackTrace = {};
     this._data = {};
     this._level = null;
     this._createdAt = null;
@@ -23,7 +25,9 @@ class Log extends Resource {
   save() {
     return new Promise((resolve, reject) => {
       const log = new LogModel({
-        message: this._message,
+        description: this._description,
+        title: this._title,
+        stackTrace: this._stackTrace,
         data: this._data,
         level: this._level,
       });
@@ -73,7 +77,9 @@ class Log extends Resource {
    * @return {void}
    */
   map(data) {
-    this._message = data.message;
+    this._description = data.description;
+    this._title = data.title;
+    this._stackTrace = data.stackTrace;
     this._data = data.data;
     this._level = data.level;
     this._createdAt = data.createdAt;
@@ -89,7 +95,9 @@ class Log extends Resource {
    */
   getData() {
     return {
-      message: this._message,
+      description: this._description,
+      title: this._title,
+      stackTrace: this._stackTrace,
       data: this._data,
       level: this._level,
       createdAt: this._createdAt,
@@ -103,12 +111,28 @@ class Log extends Resource {
    * Getters and setters
    */
 
-  get message() {
-    return this._message;
+  get description() {
+    return this._description;
   }
 
-  set message(message) {
-    this._message = message;
+  set description(description) {
+    this._description = description;
+  }
+
+  get title() {
+    return this._title;
+  }
+
+  set title(title) {
+    this._title = title;
+  }
+
+  get stackTrace() {
+    return this._stackTrace;
+  }
+
+  set stackTrace(stackTrace) {
+    this._stackTrace = stackTrace;
   }
 
   get data() {

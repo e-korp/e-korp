@@ -5,11 +5,11 @@ const Log = require('../../../../src/resources/log/log');
 
 describe('Log', () => {
   describe('Getters and setters', () => {
-    it('Should get and set message', () => {
-      const m = 'my message';
+    it('Should get and set description', () => {
+      const m = 'my description';
       const l = new Log();
-      l.message = m;
-      expect(l.message).to.deep.equal(m);
+      l.description = m;
+      expect(l.description).to.deep.equal(m);
     });
 
     it('Should get and set data', () => {
@@ -45,6 +45,20 @@ describe('Log', () => {
       const l = new Log();
       l.id = m;
       expect(l.id).to.deep.equal(m);
+    });
+
+    it('Should get and set title', () => {
+      const m = 2;
+      const l = new Log();
+      l.title = m;
+      expect(l.title).to.deep.equal(m);
+    });
+
+    it('Should get and set stackTrace', () => {
+      const m = 2;
+      const l = new Log();
+      l.stackTrace = m;
+      expect(l.stackTrace).to.deep.equal(m);
     });
 
   });

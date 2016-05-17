@@ -1,9 +1,16 @@
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
-  message: {
+  title: {
     type: String,
     required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  stackTrace: {
+    type: Object,
   },
   level: {
     type: Number,

@@ -55,7 +55,9 @@ router.post('/', function *(next) {
 
   try {
     const l = new Log();
-    l.message = this.request.body.message;
+    l.description = this.request.body.description;
+    l.title = this.request.body.title;
+    l.stackTrace = this.request.body.stackTrace;
     l.data = this.request.body.data;
     l.level = this.request.body.level;
 

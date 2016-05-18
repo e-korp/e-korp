@@ -14,4 +14,7 @@ mongoose.connection.on('error', (err) => {
   applog.error('Database connection failed', err);
 });
 
-mongoose.connect(process.env.MONGO_URI);
+const addr = process.env.MONGO_1_PORT_27017_TCP_ADDR;
+const port = process.env.MONGO_1_PORT_27017_TCP_PORT;
+
+mongoose.connect('mongodb://' + addr + ':' + port + '/ekorp');

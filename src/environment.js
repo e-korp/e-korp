@@ -4,23 +4,12 @@
 
 const DEFAULT_ENV = {
   PORT: 3000,
-  DEV: true,
-  MONGO_URI: 'mongodb://localhost:27017/e-korp',
+  NODE_ENV: 'development',
+  MONGO_1_PORT_27017_TCP_ADDR: 'localhost',
+  MONGO_1_PORT_27017_TCP_PORT: '27017',
+  MAIN_DB_NAME: 'e-korp',
   SEED: false,
 };
-
-
-/**
- * Load environment variables from .env
- * This does not overwrite existing environment variables
- * @author Johan Kanefur <johan.canefur@gmail.com>
- * @returns {void}
- */
-const load = () => {
-  // Do not warn to the console about non-existing .env file
-  require('dotenv').load({ silent: true });
-};
-
 
 /**
  * Sets default environment variables
@@ -38,7 +27,6 @@ const applyFallback = () => {
 
 
 module.exports = {
-  load: load,
   applyFallback: applyFallback,
 
   // For testing purposes. Do not use this externally

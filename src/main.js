@@ -8,9 +8,6 @@
  */
 const envir = require('./environment');
 
-// Load environment variables from .env file
-envir.load();
-
 // Apply fallback values for environment variables
 envir.applyFallback();
 
@@ -34,23 +31,8 @@ require('./database');
  * Create required directories
  */
 applog.info('Creating required directories');
-
 const mkdirp = require('mkdirp');
-
 mkdirp('logs');
-
-
-/**
- * Seed data into the database
- */
-if (process.env.SEED) {
-  const seeder = require('./tools/seeder');
-  seeder.seedProducts().then(() => {
-    applog.info('Successfully seeded products');
-  }).catch((err) => {
-    applog.error('Could not seed products', err);
-  });
-}
 
 
 /**

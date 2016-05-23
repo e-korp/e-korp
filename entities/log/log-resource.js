@@ -1,5 +1,5 @@
-const Resource = require('../resource');
-const LogModel = require('../../models/log');
+const Resource = require('../../lib/resource');
+const LogModel = require('./log-model');
 
 class Log extends Resource {
 

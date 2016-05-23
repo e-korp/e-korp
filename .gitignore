@@ -1,4 +1,5 @@
 /node_modules/
-/cache/
-/logs/
+/server/cache/
+*.log
 .env
+.DS_Store

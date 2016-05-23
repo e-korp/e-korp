@@ -4,9 +4,8 @@
   "description": "",
   "main": "src/main.js",
   "scripts": {
-    "start": "node_modules/.bin/nodemon --debug --use_strict src/main.js",
-    "eslint": "./node_modules/.bin/eslint src/**",
-    "test": "node_modules/.bin/nodemon --exec \"node_modules/.bin/mocha ./tests/ --recursive --reporter spec --watch\""
+    "start": "bash ./scripts/start.sh",
+    "test": "bash ./scripts/test.sh"
   },
   "repository": {
     "type": "git",
@@ -19,11 +18,9 @@
   },
   "homepage": "https://github.com/e-korp/e-korp#readme",
   "dependencies": {
-    "co": "^4.6.0",
-    "dotenv": "^2.0.0",
-    "koa": "^2.0.0",
-    "koa-bodyparser": "^2.0.1",
-    "koa-router": "^5.4.0",
+    "asyncawait": "^1.0.3",
+    "body-parser": "^1.15.1",
+    "express": "^4.13.4",
     "md5": "^2.1.0",
     "mkdirp": "^0.5.1",
     "mongoose": "^4.4.13",

@@ -28,7 +28,6 @@
     "es6": true,
     "mocha": true
   },
-  "parser": "babel-eslint",
   "rules": {
 
     /*Possible Errors */

@@ -1,6 +1,6 @@
-const Resource = require('./resource');
+const Resource = require('../../lib/resource');
 const Attribute = require('./attribute');
-const ProductModel = require('../models/product');
+const ProductModel = require('./product-model');
 
 /**
  * Base product class, extend this if you want more out of it

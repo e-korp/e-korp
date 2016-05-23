@@ -1,7 +1,7 @@
-const Collection = require('./collection');
+const Collection = require('../../lib/collection');
 
-const Product = require('./product');
-const ProductModel = require('../models/product');
+const Product = require('./product-resource');
+const ProductModel = require('./product-model');
 
 class ProductCollection extends Collection {
 

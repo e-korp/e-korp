@@ -1,5 +1,5 @@
-const Collection = require('./collection');
-const CategoryModel = require('../models/category');
+const Collection = require('../../lib/collection');
+const CategoryModel = require('./category-model');
 
 class CategoryCollection extends Collection {
 

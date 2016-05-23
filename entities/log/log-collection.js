@@ -1,11 +1,8 @@
-const Collection = require('../collection');
-const LogModel = require('../../models/log');
-const Log = require('./log');
+const Collection = require('../../lib/collection');
+const LogModel = require('./log-model');
+const Log = require('./log-resource');
 
-const winston = require('winston');
-
-// Get the loggers
-const applog = winston.loggers.get('applog');
+const applog = require('winston').loggers.get('applog');
 
 class LogCollection extends Collection {
 

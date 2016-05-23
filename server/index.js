@@ -60,6 +60,7 @@ app.use(bodyParser.urlencoded({
   extended: true,
 }));
 
+
 /**
  * Attach routes
  */
@@ -67,7 +68,7 @@ app.use('/', require('./router'));
 
 
 /**
- * Route error handling
+ * Catch any error in the routes
  */
 app.use(require('./middleware/error-handler'));
 

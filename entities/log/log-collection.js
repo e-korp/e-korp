@@ -63,21 +63,39 @@ class LogCollection extends Collection {
         createdAt: order,
       };
 
-      return LogModel
-      .find(query)
-      .sort(sort)
-      .limit(100)
-      .exec()
-      .then((results) => {
-        for (const entry of results) {
-          const l = new Log();
-          l.map(entry);
-          this.add(l);
-        }
+      // Use the query to build the cache key
+      const cacheKey = this.getCacheKey(
+        'Log',
+        JSON.stringify(query) + JSON.stringify(sort)
+      );
 
-        resolve(this.items);
+      // Try to get from cache before hitting db
+      this.cache.get(cacheKey).then((data) => {
+        // Found key in cache
+        return resolve(data);
       }).catch((err) => {
-        reject(err);
+        // Did not find it in cache, load directly from DB instead
+        applog.info('Did not find key in cache', err);
+
+        return LogModel
+        .find(query)
+        .sort(sort)
+        .limit(100)
+        .exec()
+        .then((results) => {
+          for (const entry of results) {
+            const l = new Log();
+            l.map(entry);
+            this.add(l);
+          }
+
+          // Add it to the cache
+          applog.verbose('Adding log collection to cache', cacheKey);
+          this.cache.add(cacheKey, this.items);
+          return resolve(this.items);
+        }).catch((modelError) => {
+          return reject(modelError);
+        });
       });
     });
   }

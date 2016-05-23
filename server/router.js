@@ -18,5 +18,4 @@ applog.verbose('Mounting routers');
 router.use('/logs', require('../entities/log/log-router'));
 
 
-
 module.exports = router;

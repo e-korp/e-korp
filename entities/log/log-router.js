@@ -10,34 +10,35 @@ const Oops = require('../../lib/oops');
 const applog = require('winston').loggers.get('applog');
 
 /**
- * Get logs
+ * Get log entries
  */
-router.get('/', async((req, res) => {
-  const lc = new LogCollection();
+router.get('/', async((req, res, next) => {
+  const defaultFrom = new Date();
+  defaultFrom.setDate(defaultFrom.getDate() - 7);
   let levels = [];
 
+  // Try to parse the levels parameter
   try {
-    levels = this.request.query.levels.split(',');
+    levels = req.query.levels.split(',');
   } catch (e) {
     applog.warn('Invalid level parameter');
     levels = [1];
   }
 
+  // Load data from the DB
+  const lc = new LogCollection();
+
   try {
     await(lc.query(
       levels,
-      this.params.dateFrom,
-      this.params.dateTo,
-      this.params.order
+      req.query.dateFrom || defaultFrom,   // Default last week
+      req.query.dateTo || new Date(),      // Default now
+      req.query.order || 'desc'            // Default latest first
     ));
 
     res.status(200).json(lc.getData());
   } catch (e) {
-    res.status(400).json({
-      error: {
-        message: 'Could not fetch logs',
-      },
-    });
+    next(new Oops('Could not fetch logs', 5001, e));
   }
 }));
 

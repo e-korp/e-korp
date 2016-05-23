@@ -8,14 +8,16 @@ const applog = require('winston').loggers.get('applog');
 module.exports = (oops, req, res, next) => {
   next(oops, req, res, next);
 
-  applog.error('Internal server error', oops);
+  if (oops) {
+    applog.error('Internal server error', oops);
 
-  res.status(oops.status || 500);
-  res.json({
-    error: {
-      message: oops.message,
-      code: oops.code,
-      err: oops.error,
-    },
-  });
+    res.status(oops.status || 500);
+    res.json({
+      error: {
+        message: oops.message,
+        code: oops.code,
+        err: oops.error,
+      },
+    });
+  }
 };

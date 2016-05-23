@@ -2,6 +2,7 @@
  * API app setup
  */
 
+const bodyParser = require('body-parser');
 const mkdirp = require('mkdirp');
 const express = require('express');
 const app = express();
@@ -52,9 +53,24 @@ cache.setup(cacheConfig.dir, cacheConfig.invalidateInterval);
 
 
 /**
+* Middleware for parsing JSON bodies
+*/
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({
+  extended: true,
+}));
+
+/**
  * Attach routes
  */
 app.use('/', require('./router'));
+
+
+/**
+ * Route error handling
+ */
+app.use(require('./middleware/error-handler'));
+
 
 
 /**

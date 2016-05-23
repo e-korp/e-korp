@@ -5,6 +5,7 @@ const await = require('asyncawait/await');
 // Import the resource
 const LogCollection = require('./log-collection');
 const Log = require('./log-resource');
+const Oops = require('../../lib/oops');
 
 const applog = require('winston').loggers.get('applog');
 
@@ -45,12 +46,7 @@ router.get('/', async((req, res) => {
  * Add new log entry
  * @author Johan Kanefur <johan.canefur@gmail.com>
  */
-router.post('/', (req, res) => {
-
-  res.error('hejhej');
-
-  console.log(res.status(200));
-
+router.post('/', async((req, res, next) => {
   try {
     const l = new Log();
     l.description = req.body.description;
@@ -62,9 +58,8 @@ router.post('/', (req, res) => {
     await(l.save());
     res.status(201).json(l.getData());
   } catch (e) {
-
-    res.status(400).error('Could not get create log', e);
+    next(new Oops('Could not add log entry', 5000, e));
   }
-});
+}));
 
 module.exports = router;

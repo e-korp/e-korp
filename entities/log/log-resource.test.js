@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const Log = require('../../../../src/resources/log/log');
+const Log = require('./log-resource');
 
 describe('Log', () => {
   describe('Getters and setters', () => {

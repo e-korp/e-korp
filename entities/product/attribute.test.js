@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const Attribute = require('../../../src/resources/attribute');
+const Attribute = require('./attribute');
 
 describe('Attribute', () => {
   describe('Getters and setters', () => {

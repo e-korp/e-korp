@@ -17,6 +17,7 @@ const applog = require('winston').loggers.get('applog');
 /**
  * Apply fallback values for environment variables
  */
+applog.verbose('Applying fallback environment variables');
 require('./environment').applyFallback();
 
 

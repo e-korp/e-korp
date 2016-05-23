@@ -2,14 +2,14 @@ const chai = require('chai');
 const expect = chai.expect;
 const decache = require('decache');
 
-let envir = require('../../src/environment');
+let envir = require('./environment');
 
 describe('Environment', () => {
 
   beforeEach(() => {
     // Reset the module to the initial state
-    decache('../../src/environment');
-    envir = require('../../src/environment');
+    decache('./environment');
+    envir = require('./environment');
 
     // Cleanup
     delete process.env.TEST_VAR;

@@ -45,23 +45,26 @@ router.get('/', async((req, res) => {
  * Add new log entry
  * @author Johan Kanefur <johan.canefur@gmail.com>
  */
-router.post('/', async((req, res) => {
-  applog.info(req.body);
+router.post('/', (req, res) => {
+
+  res.error('hejhej');
+
+  console.log(res.status(200));
 
   try {
     const l = new Log();
-    l.description = this.request.body.description;
-    l.title = this.request.body.title;
-    l.stackTrace = this.request.body.stackTrace;
-    l.data = this.request.body.data;
-    l.level = this.request.body.level;
+    l.description = req.body.description;
+    l.title = req.body.title;
+    l.stackTrace = req.body.stackTrace;
+    l.data = req.body.data;
+    l.level = req.body.level;
 
     await(l.save());
-
     res.status(201).json(l.getData());
   } catch (e) {
+
     res.status(400).error('Could not get create log', e);
   }
-}));
+});
 
 module.exports = router;

@@ -20,7 +20,7 @@ winston.loggers.add('tasklog', {
 // Configure the logger for general use
 winston.loggers.add('applog', {
   console: {
-    level: 'info',
+    level: 'verbose',
     colorize: true,
     label: 'Application log',
   },

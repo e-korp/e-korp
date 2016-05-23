@@ -1,4 +1,4 @@
-const Resource = require('./resource');
+const Resource = require('../../lib/resource');
 
 class ProductGroup extends Resource {
 

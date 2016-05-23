@@ -5,8 +5,8 @@ chai.use(chaiAsPromised);
 const expect = chai.expect;
 const should = chai.should();
 
-const Product = require('../../../src/resources/product');
-const Attribute = require('../../../src/resources/attribute');
+const Product = require('./product-resource');
+const Attribute = require('./attribute');
 
 describe('Product', () => {
   describe('Getters and setters', () => {

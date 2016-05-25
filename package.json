@@ -24,7 +24,9 @@
     "md5": "^2.1.0",
     "mkdirp": "^0.5.1",
     "mongoose": "^4.4.13",
+    "morgan": "^1.7.0",
     "node-fetch": "^1.5.1",
+    "pagerduty": "0.0.3",
     "winston": "^2.2.0"
   },
   "devDependencies": {

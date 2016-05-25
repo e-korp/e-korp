@@ -5,7 +5,9 @@ const await = require('asyncawait/await');
 // Import the resource
 const LogCollection = require('./log-collection');
 const Log = require('./log-resource');
+
 const Oops = require('../../lib/oops');
+const InputParser = require('../../lib/inputparser');
 
 const applog = require('winston').loggers.get('applog');
 
@@ -13,27 +15,17 @@ const applog = require('winston').loggers.get('applog');
  * Get log entries
  */
 router.get('/', async((req, res, next) => {
-  const defaultFrom = new Date();
-  defaultFrom.setDate(defaultFrom.getDate() - 7);
-  let levels = [];
+  const levels = InputParser.queryList(req.query.levels);
+  const range = InputParser.dateRange(req.query.dateFrom, req.query.dateTo);
 
-  // Try to parse the levels parameter
-  try {
-    levels = req.query.levels.split(',');
-  } catch (e) {
-    applog.warn('Invalid level parameter');
-    levels = [1];
-  }
-
-  // Load data from the DB
   const lc = new LogCollection();
 
   try {
     await(lc.query(
-      levels,
-      req.query.dateFrom || defaultFrom,   // Default last week
-      req.query.dateTo || new Date(),      // Default now
-      req.query.order || 'desc'            // Default latest first
+      levels ? levels.length > 0 : [1, 2, 3, 4, 5, 6],
+      range[0],                          // Defaults to beginning of time
+      range[1],                          // Defaults to future
+      InputParser.order(req.query.order) // Defaults to desc
     ));
 
     res.status(200).json(lc.getData());

@@ -24,44 +24,26 @@ class LogCollection extends Collection {
    */
   query(levels = [], dateFrom, dateTo, order = 'desc') {
     return new Promise((resolve, reject) => {
-      // Validate the sorting
-      if (['asc', 'desc'].indexOf(order) === -1) {
-        return reject(new Error('Invalid sorting value'));
-      }
-
-      if (!(levels instanceof Array)) {
-        return reject(new Error('Levels must be an array'));
-      }
-
       const query = {};
-
 
       // Add filter for levels
       if (levels) {
-        query.level = {
-          $in: levels,
-        };
+        query.level = { $in: levels };
       }
 
-      // Add filter for date ranges
-      const useDateFrom = dateFrom instanceof Date;
-      const useDateTo = dateTo instanceof Date;
-
-      if (useDateFrom || useDateTo) {
+      if (dateFrom || dateTo) {
         query.createdAt = {};
 
-        if (useDateFrom) {
+        if (dateFrom) {
           query.createdAt.$gte = dateFrom;
         }
 
-        if (useDateTo) {
+        if (dateTo) {
           query.createdAt.$lte = dateTo;
         }
       }
 
-      const sort = {
-        createdAt: order,
-      };
+      const sort = { createdAt: order };
 
       // Use the query to build the cache key
       const cacheKey = this.getCacheKey(
@@ -70,9 +52,11 @@ class LogCollection extends Collection {
       );
 
       // Try to get from cache before hitting db
-      this.cache.get(cacheKey).then((data) => {
+      this.cache.get(cacheKey).then(data => {
         // Found key in cache
-        return resolve(data);
+        this.map(data);
+
+        return resolve(this.getData());
       }).catch((err) => {
         // Did not find it in cache, load directly from DB instead
         applog.info('Did not find key in cache', err);
@@ -83,16 +67,11 @@ class LogCollection extends Collection {
         .limit(100)
         .exec()
         .then((results) => {
-          for (const entry of results) {
-            const l = new Log();
-            l.map(entry);
-            this.add(l);
-          }
+          this.map(results);
 
           // Add it to the cache
-          applog.verbose('Adding log collection to cache', cacheKey);
-          this.cache.add(cacheKey, this.items);
-          return resolve(this.items);
+          this.cache.add(cacheKey, this.getData(), ['logs']);
+          return resolve(this.getData());
         }).catch((modelError) => {
           return reject(modelError);
         });
@@ -102,16 +81,18 @@ class LogCollection extends Collection {
 
 
   /**
-   * Returns the collection in a plain object format
+   * Maps raw data into the structure of this object
    * @author Johan Kanefur <johan.canefur@gmail.com>
-   * @return {array} List in this collection
+   * @param  {array} entries List of entries
+   * @return {void}
    */
-  getData() {
-    return this.items.map((item) => {
-      return item.getData();
-    });
+  map(entries) {
+    for (const entry of entries) {
+      const l = new Log();
+      l.map(entry);
+      this.add(l);
+    }
   }
-
 
 }
 

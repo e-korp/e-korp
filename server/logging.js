@@ -5,6 +5,18 @@
  */
 const winston = require('winston');
 
+// Configure logger for cache
+winston.loggers.add('cachelog', {
+  console: {
+    level: 'silly',
+    colorize: true,
+    label: 'Cache',
+  },
+  file: {
+    filename: './logs/cache.log',
+  },
+});
+
 // Configure logger for background tasks
 winston.loggers.add('tasklog', {
   console: {

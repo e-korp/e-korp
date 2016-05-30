@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const goredis = require('../../lib/goredis');
 
-const schema = new mongoose.Schema({
+const logSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -19,8 +20,14 @@ const schema = new mongoose.Schema({
   data: {
     type: Object,
   },
+  issuer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
 }, {
   timestamps: true,
 });
 
-module.exports = mongoose.model('Log', schema);
+// logSchema.plugin(goredis);
+
+module.exports = mongoose.model('Log', logSchema);

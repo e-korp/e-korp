@@ -10,10 +10,10 @@ winston.loggers.add('cachelog', {
   console: {
     level: 'silly',
     colorize: true,
-    label: 'Cache',
+    label: 'Redis cache',
   },
   file: {
-    filename: './logs/cache.log',
+    filename: './logs/redis-cache.log',
   },
 });
 

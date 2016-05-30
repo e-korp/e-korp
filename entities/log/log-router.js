@@ -2,57 +2,110 @@ const router = require('express').Router();
 const async = require('asyncawait/async');
 const await = require('asyncawait/await');
 
-// Import the resource
-const LogCollection = require('./log-collection');
-const Log = require('./log-resource');
+const Log = require('./log-model');
 
+// Error handling and logging
 const Oops = require('../../lib/oops');
-const InputParser = require('../../lib/inputparser');
-
 const applog = require('winston').loggers.get('applog');
 
-/**
- * Get log entries
- */
-router.get('/', async((req, res, next) => {
-  const levels = InputParser.queryList(req.query.levels);
-  const range = InputParser.dateRange(req.query.dateFrom, req.query.dateTo);
-
-  const lc = new LogCollection();
-
-  try {
-    await(lc.query(
-      levels ? levels.length > 0 : [1, 2, 3, 4, 5, 6],
-      range[0],                          // Defaults to beginning of time
-      range[1],                          // Defaults to future
-      InputParser.order(req.query.order) // Defaults to desc
-    ));
-
-    res.status(200).json(lc.getData());
-  } catch (e) {
-    next(new Oops('Could not fetch logs', 5001, e));
-  }
-}));
+// Middleware
+const auth = require('../../server/middleware/authentication');
 
 
 /**
  * Add new log entry
+ * @todo append the issuer to the logging object
  * @author Johan Kanefur <johan.canefur@gmail.com>
  */
-router.post('/', async((req, res, next) => {
-  try {
-    const l = new Log();
-    l.description = req.body.description;
-    l.title = req.body.title;
-    l.stackTrace = req.body.stackTrace;
-    l.data = req.body.data;
-    l.level = req.body.level;
+const create = async((req, res, next) => {
+  // Try to construct the new logging object
+  let log = null;
 
-    await(l.save());
-    res.status(201).json(l.getData());
-  } catch (e) {
-    next(new Oops('Could not add log entry', 5000, e));
+  try {
+    log = new Log({
+      title: req.body.attributes.title,
+      description: req.body.attributes.description,
+      stackTrace: req.body.attributes.stackTrace || {},
+      level: req.body.attributes.level,
+      data: req.body.attributes.data,
+    });
+  } catch (err) {
+    return res.status(400).json(
+      new Oops('Required parameters missing', 4001, err)
+    );
   }
-}));
+
+  // Try to save it
+  try {
+    await(log.save());
+  } catch (err) {
+    return next(new Oops('Could not add log entry', 6001, err));
+  }
+
+  return res.status(201).json({
+    data: {
+      type: 'log',
+      id: log.id,
+      attributes: {
+        title: log.title,
+        description: log.description,
+        stackTrace: log.stackTrace,
+        level: log.level,
+        data: log.data,
+      },
+    },
+  });
+});
+
+
+/**
+ * Get log entries
+ * @todo Query and sorting, pagination etc
+ * @author Johan Kanefur <johan.canefur@gmail.com>
+ */
+const get = async((req, res, next) => {
+  let entries = [];
+
+  // Query for logs
+  try {
+    entries = await(
+      Log
+      .find({})
+      .sort({createdAt: -1})
+      .limit(100)
+      .exec()
+    );
+  } catch (err) {
+    return next(new Oops('Could not get entries', 6002));
+  }
+
+  // Construct the return data
+  const responseData = [];
+
+  for (const log of entries) {
+    responseData.push({
+      data: {
+        type: 'log',
+        id: log.id,
+        attributes: {
+          title: log.title,
+          description: log.description,
+          stackTrace: log.stackTrace,
+          level: log.level,
+          data: log.data,
+        },
+      },
+    });
+  }
+
+  return res.status(200).json(responseData);
+});
+
+
+/**
+ * Hook up to router
+ */
+router.post('/', create);
+router.get('/', get);
 
 module.exports = router;

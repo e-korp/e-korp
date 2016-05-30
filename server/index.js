@@ -37,19 +37,9 @@ mkdirp('cache');
 
 
 /**
- * Setup internal cache
+ * Setup cache
  */
-applog.info('Setting up internal cache');
-const cache = require('../lib/cache');
-const cacheConfig = require('../config/cache');
-cache.setup(cacheConfig.dir, cacheConfig.invalidateInterval);
-
-
-/**
- * Currency monitoring
- */
-// applog.info('Setting up currency conversion');
-// require('../lib/currency-converter').run();
+// TODO: Setup Redis cache and monitoring here
 
 
 /**

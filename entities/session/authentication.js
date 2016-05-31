@@ -11,7 +11,11 @@ const applog = require('winston').loggers.get('applog');
  */
 const generateJwt = (payload) => {
   return new Promise((resolve, reject) => {
-    jwt.sign(payload, config.jwtSecret, {}, (err, token) => {
+    const options = {
+      expiresIn: config.jwtTTL,
+    };
+
+    jwt.sign(payload, config.jwtSecret, options, (err, token) => {
       if (err) {
         return reject(err);
       }

@@ -10,6 +10,7 @@ const Auth = require('./authentication');
 const Oops = require('../../lib/oops');
 const applog = require('winston').loggers.get('applog');
 
+const config = require('../../config/main');
 
 /**
  * Create 'sessions'
@@ -21,10 +22,10 @@ const create = async((req, res, next) => {
   let password = null;
 
   try {
-    email = req.body.attributes.email;
-    password = req.body.attributes.password;
+    email = req.body.data.attributes.email;
+    password = req.body.data.attributes.password;
   } catch (err) {
-    return next(new Oops('Required parameters is missing', 4001, err));
+    return next(new Oops('Required parameters is missing', 400, 4001, err));
   }
 
   // Try to get the user by email address
@@ -37,13 +38,12 @@ const create = async((req, res, next) => {
         .select('+password')
         .exec()
     )[0];
-  } catch (err) {
-    return next(new Oops('Could not create session', 5001, err));
-  }
 
-  // No user was found for the email
-  if (Object.keys(user).length === 0) {
-    return next(new Oops('Invalid authentication credentials', 5002));
+    if (!user) {
+      throw new Error('Could not find user');
+    }
+  } catch (err) {
+    return next(new Oops('Could not create session', 403, 5001, err));
   }
 
   // A user was found, compare the password hash
@@ -52,11 +52,12 @@ const create = async((req, res, next) => {
   try {
     passwordMatch = await(Auth.compareHash(user.password, password));
   } catch (err) {
-    return next(new Oops('Invalid authentication credentials', 5003, err));
+    // TODO: Consistency is key
+    return next(new Oops('Invalid authentication credentials', 403, 5003, err));
   }
 
   if (!passwordMatch) {
-    return next(new Oops('Could not create session', 5004));
+    return next(new Oops('Could not create session', 403, 5004));
   }
 
   // Generate a new JWT for the client
@@ -65,10 +66,13 @@ const create = async((req, res, next) => {
   try {
     token = await(Auth.generateJwt(Auth.userPayload(user)));
   } catch (err) {
-    return next(new Oops('Could not generate token', 5005, err));
+    return next(new Oops('Could not generate token', 500, 5005, err));
   }
 
-  applog.info(`User '${user.email}' logged in successfully using token auth`);
+  applog.info(
+    `User '${user.email}' logged in successfully using token auth.` +
+    ` Valid for ${config.jwtTTL}`
+  );
 
   // Write response
   return res.status(201).json({

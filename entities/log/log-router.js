@@ -39,7 +39,7 @@ const create = async((req, res, next) => {
   try {
     await(log.save());
   } catch (err) {
-    return next(new Oops('Could not add log entry', 6001, err));
+    return next(new Oops('Could not add log entry', 500, 6001, err));
   }
 
   return res.status(201).json({
@@ -76,7 +76,7 @@ const get = async((req, res, next) => {
       .exec()
     );
   } catch (err) {
-    return next(new Oops('Could not get entries', 6002));
+    return next(new Oops('Could not get entries', 500, 6002));
   }
 
   // Construct the return data
@@ -106,6 +106,6 @@ const get = async((req, res, next) => {
  * Hook up to router
  */
 router.post('/', create);
-router.get('/', get);
+router.get('/', get); // TODO: Add middlware
 
 module.exports = router;

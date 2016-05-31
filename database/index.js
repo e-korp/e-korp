@@ -17,4 +17,4 @@ mongoose.connection.on('error', (err) => {
 const addr = process.env.MONGO_1_PORT_27017_TCP_ADDR;
 const port = process.env.MONGO_1_PORT_27017_TCP_PORT;
 
-mongoose.connect('mongodb://' + addr + ':' + port + '/ekorp');
+mongoose.connect(`mongodb://${addr}:${port}/ekorp`);

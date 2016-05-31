@@ -28,6 +28,6 @@ const logSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-// logSchema.plugin(goredis);
+logSchema.plugin(goredis);
 
 module.exports = mongoose.model('Log', logSchema);

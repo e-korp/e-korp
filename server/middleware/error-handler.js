@@ -9,9 +9,9 @@ module.exports = (oops, req, res, next) => {
   next(oops, req, res, next);
 
   if (oops) {
-    applog.error('Internal server error', oops);
+    applog.error(oops);
 
-    res.status(oops.status || 500);
+    res.status(oops.httpCode || 500);
     res.json({
       error: {
         message: oops.message,

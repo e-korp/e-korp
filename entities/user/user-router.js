@@ -29,7 +29,7 @@ const create = async((req, res, next) => {
     role = req.body.attributes.role;
     name = req.body.attributes.name;
   } catch (err) {
-    return next(new Oops('Required parameters missing', 4001, err));
+    return next(new Oops('Required parameters missing', 400, 4001, err));
   }
 
   // Hash the password
@@ -38,7 +38,7 @@ const create = async((req, res, next) => {
   try {
     hash = await(Auth.generateHash(password));
   } catch (err) {
-    return next(new Oops('Could not generate password hash', 5000, err));
+    return next(new Oops('Could not generate password hash', 500, 5000, err));
   }
 
   const newUser = new User({
@@ -52,7 +52,7 @@ const create = async((req, res, next) => {
   try {
     await(newUser.save());
   } catch (err) {
-    return next(new Oops('Could not save new user', 5000, err));
+    return next(new Oops('Could not save new user', 500, 5000, err));
   }
 
   applog.info(`Created new user (${newUser.email})`);

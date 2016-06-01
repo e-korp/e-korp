@@ -4,6 +4,7 @@ const await = require('asyncawait/await');
 
 // Import the model
 const Watcher = require('./watcher-model');
+const Log = require('../log/log-model');
 const states = require('./states');
 
 // Use pager duty for alarms
@@ -13,86 +14,297 @@ const pager = new PagerDuty({
 });
 
 const Oops = require('../../lib/oops');
-const InputParser = require('../../lib/inputparser');
-
 const applog = require('winston').loggers.get('applog');
-
 
 // TODO: Add authentication middleware on this entire route
 
 /**
  * Get list of all watchers entries
  */
-router.get('/', async((req, res, next) => {
+
+const get = async((req, res, next) => {
+  let watchers = [];
+
   try {
-    const watchers = await(Watcher.find({}).exec());
-    res.status(200).json(watchers);
-  } catch (e) {
-    next(new Oops('Could not get watchers', 5001, e));
+    watchers = await(Watcher.find({}).exec());
+  } catch (err) {
+    return next(new Oops('Could not get watchers', 500, 5000, err));
   }
-}));
+
+  const responseData = [];
+
+  for (const watcher of watchers) {
+    responseData.push({
+      data: {
+        type: 'watcher',
+        id: watcher.id,
+        attributes: {
+          name: watcher.name,
+          description: watcher.description,
+          state: watcher.state,
+          updatedAt: watcher.updatedAt,
+          createdAt: watcher.createdAt
+        }
+      }
+    });
+  }
+
+  res.status(200).json(responseData);
+});
+
+/**
+ * Get specific watcher
+ */
+const getSpecific = async((req, res, next) => {
+  let watcher = null;
+
+  try {
+    watcher = await(Watcher.findOne(req.params.id).populate('logs').exec());
+  } catch (err) {
+    return next(new Oops('Could not find watcher', 500, 5000, err));
+  }
+
+  if (!watcher) {
+    return next(new Oops('Could not find watcher', 404, 5000));
+  }
+
+  const responseData = {
+    data: {
+      type: 'watcher',
+      id: watcher.id,
+      attributes: {
+        name: watcher.name,
+        description: watcher.description,
+        state: watcher.state,
+        updatedAt: watcher.updatedAt,
+        createdAt: watcher.createdAt,
+      },
+      logs: {
+        data: watcher.logs.map(log => {
+          return {
+            type: 'log',
+            id: log.id
+          };
+        })
+      }
+    }
+  };
+
+  return res.status(200).json(responseData);
+});
 
 
 /**
  * Add new watcher
  */
-router.post('/', async((req, res, next) => {
+const add = async((req, res, next) => {
   try {
     const watcher = new Watcher({
-      name: req.body.name,
-      description: req.body.description,
-      id: req.body.id,
+      name: req.body.attributes.name,
+      description: req.body.attributes.description,
+      id: req.body.attributes.id
     });
 
     await(watcher.save());
-    res.status(201).json(watcher);
-  } catch (e) {
-    next(new Oops('Could not add watcher', 5000, e));
-  }
-}));
 
+    const responseData = {
+      data: {
+        type: 'watcher',
+        id: watcher.id,
+        attributes: {
+          name: watcher.name,
+          description: watcher.description,
+          state: watcher.state,
+          updatedAt: watcher.updatedAt,
+          createdAt: watcher.createdAt
+        }
+      }
+    };
+
+    res.status(201).json(responseData);
+  } catch (err) {
+    if (err.code === 11000) {
+      return next(new Oops('Watcher with ID already exists', 409, 5000, err));
+    }
+
+    return next(new Oops('Could not add watcher', 500, 5000, err));
+  }
+});
 
 /**
  * Update specific watcher
  * @todo we can broadcast state changes with socketio here
  * @todo add integration with pagerduty here
  */
-router.post('/:id', async((req, res, next) => {
+const update = async((req, res, next) => {
+  let watcher = null;
+
   try {
-    const watcher = await(Watcher.findOne({id: req.params.id}));
-
-    if (!watcher) {
-      return res.status(404).json(new Oops('Could not find watcher', 5000));
-    }
-
-    // Check if the state has changed to trigger alarms
-    if (req.body.state) {
-      if (watcher.state === states.OK && req.body.state !== states.OK) {
-        // Watcher entered failed state
-        applog.info(`Watcher '${watcher.name}' (${watcher.id}) entered failed state`);
-      }
-
-      if (watcher.state !== states.OK && req.body.state === states.OK) {
-        // Watcher recovered from failed state
-        applog.info(`Watcher '${watcher.name}' (${watcher.id}) recovered from fail-state`);
-      }
-    }
-
-    // Change values if provided
-    watcher.name = req.body.name || watcher.name;
-    watcher.description = req.body.description || watcher.description;
-    watcher.state = req.body.state || watcher.state;
-
-    // Append logs if it is passed on
-    if (req.body.log) {
-      watcher.logs.push(req.body.log);
-    }
-
-    await(watcher.save());
-    return res.status(200).json(watcher);
-  } catch (e) {
-    return next(new Oops('Could not update watcher', 5000, e));
+    watcher = await(Watcher.findOne(req.params.id));
+  } catch (err) {
+    return next(new Oops('Could not find watcher', 500, 5000, err));
   }
-}));
+
+  if (!watcher) {
+    return next(new Oops('Could not find watcher', 404, 5000));
+  }
+
+  // Gather attributes
+  let state = null;
+  let name = null;
+  let description = null;
+
+  try {
+    state = req.body.attributes.state;
+    name = req.body.attributes.name;
+    description = req.body.attributes.description;
+  } catch (err) {
+    return next(new Oops('Missing required parameters', 400, 5000, err));
+  }
+
+  // Check if the state has changed to trigger alarms
+  if (state) {
+    if (watcher.state === states.OK && state !== states.OK) {
+      // Watcher entered failed state
+      applog.info(`Watcher ${watcher.id} entered failed state`);
+    }
+
+    if (watcher.state !== states.OK && state === states.OK) {
+      // Watcher recovered from failed state
+      applog.info(`Watcher ${watcher.id} recovered from fail-state`);
+    }
+  }
+
+  // Change values if provided
+  watcher.name = name || watcher.name;
+  watcher.description = description || watcher.description;
+  watcher.state = state || watcher.state;
+
+  await(watcher.save());
+
+  const responseData = {
+    data: {
+      type: 'watcher',
+      id: watcher.id,
+      attributes: {
+        name: watcher.name,
+        description: watcher.description,
+        state: watcher.state,
+        updatedAt: watcher.updatedAt,
+        createdAt: watcher.createdAt
+      }
+    }
+  };
+
+  return res.status(200).json(responseData);
+});
+
+/**
+ * Get all logs for a specific watcher
+ */
+const getSpecificLogs = async((req, res, next) => {
+  let watcher = null;
+
+  try {
+    watcher = await(Watcher.findOne(req.params.id).populate('logs').exec());
+  } catch (err) {
+    return next(new Oops('Could not find watcher', 500, 5000, err));
+  }
+
+  if (!watcher) {
+    return next(new Oops('Could not find watcher', 404, 5000));
+  }
+
+  const responseData = watcher.logs.map(log => {
+    return {
+      data: {
+        type: 'log',
+        attributes: {
+          title: log.title,
+          description: log.description,
+          stackTrace: log.stackTrace,
+          level: log.level,
+          data: log.data
+        }
+      }
+    };
+  });
+
+  return res.status(200).json(responseData);
+});
+
+/**
+ * Create logs on a watcher
+ */
+const createSpecificLogs = async((req, res, next) => {
+  let watcher = null;
+
+  try {
+    watcher = await(Watcher.findOne(req.params.id).populate('logs').exec());
+  } catch (err) {
+    return next(new Oops('Could not find watcher', 500, 5000, err));
+  }
+
+  if (!watcher) {
+    return next(new Oops('Could not find watcher', 404, 5000));
+  }
+
+  // Try to construct the new logging object
+  let log = null;
+
+  try {
+    log = new Log({
+      title: req.body.attributes.title,
+      description: req.body.attributes.description,
+      stackTrace: req.body.attributes.stackTrace || {},
+      level: req.body.attributes.level,
+      data: req.body.attributes.data,
+    });
+  } catch (err) {
+    return res.status(400).json(
+      new Oops('Required parameters missing', 400, 4001, err)
+    );
+  }
+
+  // Save the log
+  try {
+    await(log.save());
+  } catch (err) {
+    return next(new Oops('Could not save log', 500, 5000, err));
+  }
+
+  // Append the log
+  watcher.logs.push(log._id);
+
+  try {
+    await(watcher.save());
+  } catch (err) {
+    return next(new Oops('Could not store log entry', 500, 5000, err));
+  }
+
+  const responseData = {
+    data: {
+      type: 'log',
+      id: log.id,
+      attributes: {
+        title: log.title,
+        description: log.description,
+        stackTrace: log.stackTrace,
+        level: log.level,
+        data: log.data,
+      },
+    },
+  };
+
+  return res.status(200).json(responseData);
+});
+
+// TODO: Middleware for authentication
+router.get('/', get);
+router.get('/:id', getSpecific);
+router.post('/', add);
+router.post('/:id', update);
+router.get('/:id/logs', getSpecificLogs);
+router.post('/:id/logs', createSpecificLogs);
 
 module.exports = router;

@@ -31,7 +31,7 @@ const create = async((req, res, next) => {
     });
   } catch (err) {
     return res.status(400).json(
-      new Oops('Required parameters missing', 4001, err)
+      new Oops('Required parameters missing', 400, 4001, err)
     );
   }
 

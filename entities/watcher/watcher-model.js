@@ -20,24 +20,8 @@ const schema = new mongoose.Schema({
     'default': states.NONE,
   },
   logs: [{
-    title: {
-      type: String,
-    },
-    description: {
-      type: String,
-    },
-    stackTrace: {
-      type: Object,
-    },
-    level: {
-      type: Number,
-    },
-    data: {
-      type: Object,
-    },
-    time: {
-      type: Date,
-    },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Log',
   }],
 }, {
   timestamps: true,

@@ -1,32 +1,5 @@
 const router = require('express').Router();
 const applog = require('winston').loggers.get('applog');
-const morgan = require('morgan');
-const fs = require('fs');
-const path = require('path');
-
-/**
- * Apply middleware
- */
-applog.verbose('Adding routing middleware');
-router.use(require('./middleware/error-handler'));
-
-
-/**
- * Setup access log
- */
-
- // Always log to file
-router.use(morgan('common', {
-  stream: fs.createWriteStream(path.join('logs', 'access.log'), {
-    flags: 'a',
-  }),
-}));
-
-// Log to console in dev mode
-if (process.env.NODE_ENV === 'development') {
-  router.use(morgan('dev'));
-}
-
 
 /**
  *  Mount routers

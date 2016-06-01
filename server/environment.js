@@ -21,9 +21,6 @@ const DEFAULT_ENV = {
  * @return {void}
  */
 const applyFallback = () => {
-
-  console.log('ENIVORIR', process.env);
-
   for (const env in DEFAULT_ENV) {
     // Do not overwrite already set variables
     if (!(env in process.env)) {

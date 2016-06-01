@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const goredis = require('../../lib/goredis');
+//const goredis = require('../../lib/goredis');
 
 const logSchema = new mongoose.Schema({
   title: {
@@ -28,6 +28,6 @@ const logSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-logSchema.plugin(goredis);
+//logSchema.plugin(goredis);
 
 module.exports = mongoose.model('Log', logSchema);

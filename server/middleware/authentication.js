@@ -1,9 +1,8 @@
+const userRoles = require('../../entities/user/user-roles');
 const Auth = require('../../entities/session/authentication');
 const Oops = require('../../lib/oops');
-
 const async = require('asyncawait/async');
 const await = require('asyncawait/await');
-
 const applog = require('winston').loggers.get('applog');
 
 /**
@@ -16,7 +15,7 @@ const authenticateJWT = async((req, res, next) => {
   // Check if the token header
   if (!token) {
     applog.verbose('User did not have X-Access-Token header');
-    return next(new Oops('Unauthorized', 403, 5002));
+    return next(new Oops('Unauthorized', 403, 5000));
   }
 
   let payload = null;
@@ -25,7 +24,7 @@ const authenticateJWT = async((req, res, next) => {
     payload = await(Auth.validateJwt(token));
   } catch (err) {
     applog.verbose('User token was invalid');
-    return next(new Oops('Unauthorized', 403, 5003, err));
+    return next(new Oops('Unauthorized', 403, 5000, err));
   }
 
   // Append the payload to the request object for access later on
@@ -34,4 +33,29 @@ const authenticateJWT = async((req, res, next) => {
   next(null, req, res);
 });
 
-module.exports = authenticateJWT;
+/**
+ * Makes sure the requester is a logged in admin
+ * @author Johan Kanefur <johan.canefur@gmail.com>
+ */
+const admin = async((req, res, next) => {
+  authenticateJWT(req, res, () => {
+    let role = null;
+
+    try {
+      role = req.user.role;
+    } catch (err) {
+      return next(new Oops('Unauthorized', 403, 5000, err));
+    }
+
+    if (role !== userRoles.ROLES.ADMIN) {
+      return next(new Oops('Unauthorized', 403, 5001));
+    }
+
+    return next();
+  });
+});
+
+module.exports = {
+  admin: admin,
+  authenticated: authenticateJWT,
+};

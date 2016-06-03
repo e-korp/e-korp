@@ -4,12 +4,14 @@ const await = require('asyncawait/await');
 
 // Models
 const User = require('./user-model');
-const Auth = require('../session/authentication');
+const Authentication = require('../session/authentication');
 
 // Error handling and logging
 const Oops = require('../../lib/oops');
 const applog = require('winston').loggers.get('applog');
 
+// Middleware
+const authMiddleware = require('../../server/middleware/authentication');
 
 /**
  * Create users (admin route, not for registering)
@@ -36,7 +38,7 @@ const create = async((req, res, next) => {
   let hash = null;
 
   try {
-    hash = await(Auth.generateHash(password));
+    hash = await(Authentication.generateHash(password));
   } catch (err) {
     return next(new Oops('Could not generate password hash', 500, 5000, err));
   }
@@ -71,13 +73,12 @@ const create = async((req, res, next) => {
       },
     },
   });
-
 });
 
 
 /**
  * Hook up route methods
  */
-router.post('/', create);
+router.post('/', authMiddleware.admin, create);
 
 module.exports = router;

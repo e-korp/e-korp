@@ -9,7 +9,7 @@ const Category = require('./category-resource');
 /**
  * Get categories
  */
-router.get('/', async((req, res) => {
+const getAll = async((req, res) => {
   const cc = new CategoryCollection();
 
   try {
@@ -22,7 +22,7 @@ router.get('/', async((req, res) => {
       },
     });
   }
-}));
+});
 
 
 /**
@@ -30,7 +30,7 @@ router.get('/', async((req, res) => {
  * @author Johan Kanefur <johan.canefur@gmail.com>
  * @todo Add middleware for userlevel
  */
-router.post('/', async((req, res) => {
+const create = async((req, res) => {
   try {
     const c = new Category(this.body.name);
     await(c.save());
@@ -43,6 +43,9 @@ router.post('/', async((req, res) => {
       },
     });
   }
-}));
+});
+
+// router.get('/', getAll);
+// router.post('/', create);
 
 module.exports = router;

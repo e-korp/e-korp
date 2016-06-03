@@ -6,10 +6,10 @@ const Log = require('./log-model');
 
 // Error handling and logging
 const Oops = require('../../lib/oops');
-const applog = require('winston').loggers.get('applog');
+// const applog = require('winston').loggers.get('applog');
 
 // Middleware
-const auth = require('../../server/middleware/authentication');
+const authMiddleware = require('../../server/middleware/authentication');
 
 
 /**
@@ -106,6 +106,6 @@ const get = async((req, res, next) => {
  * Hook up to router
  */
 router.post('/', create);
-router.get('/', get); // TODO: Add middlware
+router.get('/', authMiddleware.admin, get);
 
 module.exports = router;

@@ -10,7 +10,7 @@ const ProductCollection = require('./product-collection');
 /**
  * Get all products
  */
-router.get('/', async((req, res) => {
+const getAll = async((req, res) => {
   const collection = new ProductCollection();
 
   try {
@@ -19,19 +19,23 @@ router.get('/', async((req, res) => {
   } catch (err) {
     res.status(500).error('Could not get products', err);
   }
-}));
+});
 
 
 /**
  * Get specific product
  */
-router.get('/:id', async((req, res) => {
+const getSpecific = async((req, res) => {
   try {
     const product = await(Product.getById(this.params.id));
     res.status(200).json(product);
   } catch (err) {
     res.status(404).error('Could not find product', err);
   }
-}));
+});
+
+// Mount routers
+// router.get('/', getAll);
+// router.get('/:id', getSpecific);
 
 module.exports = router;

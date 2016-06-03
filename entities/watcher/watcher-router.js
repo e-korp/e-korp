@@ -13,10 +13,12 @@ const pager = new PagerDuty({
   serviceKey: '12345678901234567890123456789012',
 });
 
+// Error handling and logging
 const Oops = require('../../lib/oops');
 const applog = require('winston').loggers.get('applog');
 
-// TODO: Add authentication middleware on this entire route
+// Middleware
+const authMiddleware = require('../../server/middleware/authentication');
 
 /**
  * Get list of all watchers entries
@@ -299,12 +301,12 @@ const createSpecificLogs = async((req, res, next) => {
   return res.status(200).json(responseData);
 });
 
-// TODO: Middleware for authentication
-router.get('/', get);
-router.get('/:id', getSpecific);
-router.post('/', add);
-router.post('/:id', update);
-router.get('/:id/logs', getSpecificLogs);
-router.post('/:id/logs', createSpecificLogs);
+// Setup methods to router and apply middleware
+router.get('/', authMiddleware.admin, get);
+router.get('/:id', authMiddleware.admin, getSpecific);
+router.post('/', authMiddleware.admin, add);
+router.post('/:id', authMiddleware.admin, update);
+router.get('/:id/logs', authMiddleware.admin, getSpecificLogs);
+router.post('/:id/logs', authMiddleware.admin, createSpecificLogs);
 
 module.exports = router;

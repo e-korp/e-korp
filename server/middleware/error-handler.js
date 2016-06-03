@@ -18,7 +18,7 @@ module.exports = (oops, req, res, next) => {
     res.status(oops.httpCode || 500);
     return res.json({
       errors: [{
-        status: `${oops.httpCode}`,
+        status: `${oops.httpCode || 500}`,
         code: `${oops.code}`,
         title: oops.message,
         meta: oops.error

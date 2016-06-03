@@ -1,0 +1,20 @@
+{
+  "apps" : [
+    {
+      "name": "Ekorp API",
+      "cwd" : "/var/www/ekorp",
+      "script": "main.js",
+      "watch": "../",
+      "interpreter_args": "",
+      "watch_options": {
+        "usePolling": true,
+      },
+      "ignore_watch": [
+        "logs",
+        "cache",
+        "node_modules",
+        ".git",
+      ]
+    }
+  ]
+}

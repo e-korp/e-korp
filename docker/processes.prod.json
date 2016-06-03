@@ -1,0 +1,10 @@
+{
+  "apps" : [
+    {
+      "name": "Ekorp API",
+      "cwd" : "/var/www/ekorp",
+      "script": "main.js",
+      "watch": false
+    }
+  ]
+}

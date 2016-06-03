@@ -1,0 +1,26 @@
+FROM node:6.2-wheezy
+MAINTAINER Johan Kanefur <johan.canefur@gmail.com>
+
+# Some NPM dependencies may need python to build
+#RUN \
+#  apt-get update && \
+#  apt-get install -y python python-dev python-pip python-virtualenv && \
+#  rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /var/www/ekorp
+WORKDIR /var/www/ekorp
+
+ADD . /var/www/ekorp
+
+# Install PM2
+RUN npm install -g pm2
+
+# Install debugger server
+#RUN npm install -g node-inspector
+
+# Make sure we rebuild the dependencies
+RUN rm -rf node_modules
+RUN npm install
+
+COPY ./docker/docker-entrypoint.sh /docker-entrypoint.sh
+CMD ["bash", "/docker-entrypoint.sh"]

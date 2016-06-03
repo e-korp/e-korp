@@ -1,0 +1,28 @@
+app:
+  build: .
+  dockerfile: ./docker/Dockerfile.web
+  environment:
+    PORT: 3001
+  links:
+    - mongo
+    - redis
+  ports:
+    - "3001:3001"
+  volumes:
+    - .:/var/www/ekorp
+
+mongo:
+  image: mongo:3.0.2
+
+redis:
+  image: redis
+
+nginx:
+  image: nginx:1.9
+  ports:
+    - 443:443
+    - 80:80
+  links:
+    - app
+  volumes:
+    - ./docker/nginx/:/etc/nginx/conf.d

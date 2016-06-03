@@ -39,12 +39,20 @@ Run and watch tests with `npm test`. Tests are placed next to the implementation
 with `.test.js` ending. Mocha will scan recursively and run these tests
 automatically
 
+### API SPEC
+The API is implemented after the JSONAPI spec: http://jsonapi.org/
+
+Getting HTTP 400 on all post requests? Make sure you have the correct
+Content-Type headers: `application/vnd.api+json`.
+If you discover something thats not in the spec, please submit an issue.
+
 
 ### Todo
 Alot...
 
+- JSONAPI spec response headers (extend express response prototype)
 - Mount MongoDB as volume to persist data
-- Update this readme
+- Update this README
 - Deploying instructions
 - Docker clustering (not needed atm).
 - Solution for the dependency-building issue

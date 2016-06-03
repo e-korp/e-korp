@@ -35,7 +35,10 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Middleware for parsing JSON bodies
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+  type: 'application/vnd.api+json'
+}));
+
 app.use(bodyParser.urlencoded({
   extended: true,
 }));

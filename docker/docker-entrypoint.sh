@@ -1,8 +1,10 @@
 #!/bin/bash
 
 echo "Ekorp entrypoint"
-echo $PWD
 
+echo "Rebuilding dependencies..."
+rm -rf ./node_modules
+npm install
 
 # Default to development
 processfile="./docker/processes.dev.json"

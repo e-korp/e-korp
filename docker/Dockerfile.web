@@ -18,5 +18,5 @@ RUN npm install -g pm2
 # Install debugger server
 #RUN npm install -g node-inspector
 
-COPY ./docker/docker-entrypoint.sh /docker-entrypoint.sh
-CMD ["bash", "/docker-entrypoint.sh"]
+#COPY ./docker/docker-entrypoint.sh /docker-entrypoint.sh
+CMD ["bash", "/var/www/ekorp/docker/docker-entrypoint.sh"]

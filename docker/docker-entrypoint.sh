@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo "Ekorp entrypoint"
+echo $PWD
 
 echo "Rebuilding dependencies..."
 rm -rf ./node_modules

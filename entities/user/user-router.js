@@ -18,7 +18,7 @@ const authMiddleware = require('../../server/middleware/authentication');
  * @todo add admin middleware
  * @author Johan Kanefur <johan.canefur@gmail.com>
  */
-const create = async((req, res, next) => {
+const create = async((req, res) => {
   // Read input parameters
   let email = null;
   let password = null;
@@ -31,7 +31,7 @@ const create = async((req, res, next) => {
     role = req.body.attributes.role;
     name = req.body.attributes.name;
   } catch (err) {
-    return next(new Oops('Required parameters missing', 400, 4001, err));
+    return res.oops(new Oops('Required parameters missing', 400, 4001, err));
   }
 
   // Hash the password
@@ -39,8 +39,8 @@ const create = async((req, res, next) => {
 
   try {
     hash = await(Authentication.generateHash(password));
-  } catch (err) {
-    return next(new Oops('Could not generate password hash', 500, 5000, err));
+  } catch (e) {
+    return res.oops(new Oops('Could not generate password hash', 500, 5000, e));
   }
 
   const newUser = new User({
@@ -54,13 +54,13 @@ const create = async((req, res, next) => {
   try {
     await(newUser.save());
   } catch (err) {
-    return next(new Oops('Could not save new user', 500, 5000, err));
+    return res.oops(new Oops('Could not save new user', 500, 5000, err));
   }
 
   applog.info(`Created new user (${newUser.email})`);
 
   // Write response
-  return res.status(201).json({
+  return res.status(201).reply({
     data: {
       type: 'users',
       id: newUser.id,

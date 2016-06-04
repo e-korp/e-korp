@@ -34,6 +34,9 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+// Extend Express framework
+require('./express-extend');
+
 // Middleware for parsing JSON bodies
 app.use(bodyParser.json({
   type: 'application/vnd.api+json'

@@ -17,7 +17,7 @@ const authMiddleware = require('../../server/middleware/authentication');
  * @todo append the issuer to the logging object
  * @author Johan Kanefur <johan.canefur@gmail.com>
  */
-const create = async((req, res, next) => {
+const create = async((req, res) => {
   // Try to construct the new logging object
   let log = null;
 
@@ -30,19 +30,17 @@ const create = async((req, res, next) => {
       data: req.body.attributes.data,
     });
   } catch (err) {
-    return res.status(400).json(
-      new Oops('Required parameters missing', 400, 4001, err)
-    );
+    return res.oops(new Oops('Required parameters missing', 400, 4001, err));
   }
 
   // Try to save it
   try {
     await(log.save());
   } catch (err) {
-    return next(new Oops('Could not add log entry', 500, 6001, err));
+    return res.oops(new Oops('Could not add log entry', 500, 6001, err));
   }
 
-  return res.status(201).json({
+  return res.status(201).reply({
     data: {
       type: 'log',
       id: log.id,
@@ -63,7 +61,7 @@ const create = async((req, res, next) => {
  * @todo Query and sorting, pagination etc
  * @author Johan Kanefur <johan.canefur@gmail.com>
  */
-const get = async((req, res, next) => {
+const get = async((req, res) => {
   let entries = [];
 
   // Query for logs
@@ -76,7 +74,7 @@ const get = async((req, res, next) => {
       .exec()
     );
   } catch (err) {
-    return next(new Oops('Could not get entries', 500, 6002));
+    return res.oops(new Oops('Could not get entries', 500, 6002));
   }
 
   // Construct the return data
@@ -98,7 +96,7 @@ const get = async((req, res, next) => {
     });
   }
 
-  return res.status(200).json(responseData);
+  return res.status(200).reply(responseData);
 });
 
 

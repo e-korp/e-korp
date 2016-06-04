@@ -16,7 +16,7 @@ const config = require('../../config/main');
  * Create 'sessions'
  * @author Johan Kanefur <johan.canefur@gmail.com>
  */
-const create = async((req, res, next) => {
+const create = async((req, res) => {
   // Read input parameters
   let email = null;
   let password = null;
@@ -25,7 +25,7 @@ const create = async((req, res, next) => {
     email = req.body.data.attributes.email;
     password = req.body.data.attributes.password;
   } catch (err) {
-    return next(new Oops('Required parameters is missing', 400, 4001, err));
+    return res.oops(new Oops('Required parameters is missing', 400, 4001, err));
   }
 
   // Try to get the user by email address
@@ -43,7 +43,7 @@ const create = async((req, res, next) => {
       throw new Error('Could not find user');
     }
   } catch (err) {
-    return next(new Oops('Could not create session', 403, 5001, err));
+    return res.oops(new Oops('Could not create session', 403, 5001, err));
   }
 
   // A user was found, compare the password hash
@@ -53,11 +53,13 @@ const create = async((req, res, next) => {
     passwordMatch = await(Auth.compareHash(user.password, password));
   } catch (err) {
     // TODO: Consistency is key
-    return next(new Oops('Invalid authentication credentials', 403, 5003, err));
+    return res.oops(
+      new Oops('Invalid authentication credentials', 403, 5003, err)
+    );
   }
 
   if (!passwordMatch) {
-    return next(new Oops('Could not create session', 403, 5004));
+    return res.oops(new Oops('Could not create session', 403, 5004));
   }
 
   // Generate a new JWT for the client
@@ -66,7 +68,7 @@ const create = async((req, res, next) => {
   try {
     token = await(Auth.generateJwt(Auth.userPayload(user)));
   } catch (err) {
-    return next(new Oops('Could not generate token', 500, 5005, err));
+    return res.oops(new Oops('Could not generate token', 500, 5005, err));
   }
 
   applog.info(
@@ -75,7 +77,7 @@ const create = async((req, res, next) => {
   );
 
   // Write response
-  return res.status(201).json({
+  return res.status(201).reply({
     data: {
       type: 'sessions',
       id: 1,

@@ -62,7 +62,7 @@ const create = async((req, res) => {
   // Write response
   return res.status(201).reply({
     data: {
-      type: 'users',
+      type: 'user',
       id: newUser.id,
       attributes: {
         email: newUser.email,

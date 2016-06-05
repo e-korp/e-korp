@@ -11,5 +11,6 @@ router.use('/sessions', require('../entities/session/session-router'));
 router.use('/logs', require('../entities/log/log-router'));
 router.use('/watchers', require('../entities/watcher/watcher-router'));
 router.use('/categories', require('../entities/category/category-router'));
+router.use('/customers', require('../entities/customer/customer-router'));
 
 module.exports = router;

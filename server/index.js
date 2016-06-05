@@ -17,6 +17,9 @@ require('./environment').applyFallback();
 // Setup database connection
 require('../database');
 
+// Setup mail sending
+require('../email');
+
 // Create required directories
 applog.info('Creating required directories');
 mkdirp('logs');

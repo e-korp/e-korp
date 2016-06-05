@@ -12,6 +12,6 @@ module.exports = {
 
   customer: {
     // Whether or not to use email confirmation for customer accounts
-    accountConfirmation: true,
+    accountConfirmation: false,
   }
 };

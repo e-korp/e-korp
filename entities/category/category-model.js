@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+// const Product = require('../product/product-model');
 
 const categorySchema = new mongoose.Schema({
   name: {
@@ -7,15 +8,6 @@ const categorySchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    select: false,
-  },
-  image: {
-    type: String,
-    select: false,
-  },
-  level: {
-    type: Number,
-    'default': 0,
   },
   position: {
     type: Number,
@@ -26,5 +18,16 @@ const categorySchema = new mongoose.Schema({
     ref: 'Category',
   },
 });
+
+// Provide virtual attribute for getting product count in this category
+// categorySchema.method('getProductCount', callback => {
+//   Product.count({categories: this._id}, (err, count) => {
+//     if (err) {
+//       return callback(err);
+//     }
+//
+//     callback(null, count);
+//   });
+// });
 
 module.exports = mongoose.model('Category', categorySchema);

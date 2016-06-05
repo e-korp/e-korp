@@ -23,11 +23,11 @@ const create = async((req, res) => {
 
   try {
     log = new Log({
-      title: req.body.attributes.title,
-      description: req.body.attributes.description,
-      stackTrace: req.body.attributes.stackTrace || {},
-      level: req.body.attributes.level,
-      data: req.body.attributes.data,
+      title: req.body.data.attributes.title,
+      description: req.body.data.attributes.description,
+      stackTrace: req.body.data.attributes.stackTrace || {},
+      level: req.body.data.attributes.level,
+      data: req.body.data.attributes.data,
     });
   } catch (err) {
     return res.oops(new Oops('Required parameters missing', 400, 4001, err));
@@ -58,7 +58,7 @@ const create = async((req, res) => {
 
 /**
  * Get log entries
- * @todo Query and sorting, pagination etc
+ * @todo pagination
  * @author Johan Kanefur <johan.canefur@gmail.com>
  */
 const get = async((req, res) => {

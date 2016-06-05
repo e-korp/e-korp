@@ -152,4 +152,8 @@ const createCustomer = async((req, res) => {
 router.get('/:custid', authMiddleware.authenticated, getCustomer);
 router.post('/', createCustomer);
 
-module.exports = router;
+module.exports = {
+  router: router,
+  getCustomer: getCustomer,
+  createCustomer: createCustomer,
+};

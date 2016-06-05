@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
 /**
 * General product model
 */
 
-const productSchema = new Schema({
+const options = {
+  discriminatorKey: 'kind', // To be able to extend this schema
+  timestamps: true // Add createdAt and updatedAt to the schema
+};
+
+const productSchema = new mongoose.Schema({
   name: String,
   materials: String,
   description: String,
@@ -14,25 +18,17 @@ const productSchema = new Schema({
   colors: [
     String,
   ],
-  sku: String, // Should not be needed...
-
-  // TODO: Break out images to own model?
-  images: [{
-    front: {
-      type: Boolean,
-      'default': false,
-    },
-    thumb: String,
-    medium: String,
-    large: String,
+  sku: String,
+  variations: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product'
   }],
 
   // A product may be placed in multiple categories
   categories: [{
-    type: Schema.Types.ObjectId, ref: 'Category',
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category'
   }],
-}, {
-  timestamps: true,
-});
+}, options);
 
 module.exports = mongoose.model('Product', productSchema);

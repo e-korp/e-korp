@@ -178,11 +178,36 @@ const getAll = async((req, res) => {
 
 /**
  * Delete a category
- * @todo implement this
  * @author Johan Kanefur <johan.canefur@gmail.com>
  */
 const deleteCategory = async((req, res) => {
-  res.status(501).oops(new Oops('Not implemented', 501, 5000));
+  let category = null;
+
+  try {
+    category = await(Category.findById(req.params.id));
+  } catch (err) {
+    return res.oops(new Oops('Could not find category', 500, 5000, err));
+  }
+
+  if (!category) {
+    return res.oops(new Oops('Category did not exist', 404, 5000));
+  }
+
+  // Try to delete it
+  let affected = 0;
+
+  try {
+    affected = await(category.remove());
+  } catch (err) {
+    return res.oops(new Oops('Could not delete category', 500, 5000, err));
+  }
+
+  if (affected === 0) {
+    return res.oops(new Oops('No categories was affected', 500, 5000));
+  }
+
+  // No body is required
+  res.status(204).send();
 });
 
 

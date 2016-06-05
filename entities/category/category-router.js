@@ -6,11 +6,10 @@ const Category = require('./category-model');
 
 // Error handling and logging
 const Oops = require('../../lib/oops');
-const applog = require('winston').loggers.get('applog');
+// const applog = require('winston').loggers.get('applog');
 
 // Middleware
 const authMiddleware = require('../../server/middleware/authentication');
-
 
 /**
  * Create a new category
@@ -209,7 +208,6 @@ const deleteCategory = async((req, res) => {
   // No body is required
   res.status(204).send();
 });
-
 
 router.post('/', authMiddleware.admin, create);
 router.patch('/:id/relationships/parent', authMiddleware.admin, patchParentRel);

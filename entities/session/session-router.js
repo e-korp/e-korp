@@ -79,7 +79,7 @@ const create = async((req, res) => {
   // Write response
   return res.status(201).reply({
     data: {
-      type: 'sessions',
+      type: 'session',
       id: 1,
       attributes: {
         jwt: token,
@@ -110,4 +110,7 @@ const create = async((req, res) => {
  */
 router.post('/', create);
 
-module.exports = router;
+module.exports = {
+  router: router,
+  create: create
+};

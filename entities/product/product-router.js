@@ -38,4 +38,6 @@ const getSpecific = async((req, res) => {
 // router.get('/', getAll);
 // router.get('/:id', getSpecific);
 
-module.exports = router;
+module.exports = {
+  router: router
+};

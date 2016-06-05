@@ -81,4 +81,7 @@ const create = async((req, res) => {
  */
 router.post('/', authMiddleware.admin, create);
 
-module.exports = router;
+module.exports = {
+  router: router,
+  create: create,
+}

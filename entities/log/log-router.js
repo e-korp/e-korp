@@ -106,4 +106,8 @@ const get = async((req, res) => {
 router.post('/', create);
 router.get('/', authMiddleware.admin, get);
 
-module.exports = router;
+module.exports = {
+  router: router,
+  create: create,
+  get: get
+};

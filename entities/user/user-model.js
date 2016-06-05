@@ -6,11 +6,15 @@ const validator = require('validator');
  * General user model
  */
 
+const options = {
+  discriminatorKey: 'kind', // To be able to extend this schema
+  timestamps: true // Add createdAt and updatedAt to the schema
+};
+
 const userSchema = new mongoose.Schema({
-  name: {
+  username: {
     type: String,
-    min: 3,
-    max: 40,
+    unique: true,
   },
   email: {
     type: String,
@@ -29,9 +33,7 @@ const userSchema = new mongoose.Schema({
     min: 0,
     max: 50,
   },
-}, {
-  timestamps: true,
-});
+}, options);
 
 // Attach Redis cache to the model
 // userSchema.plugin(goredis);

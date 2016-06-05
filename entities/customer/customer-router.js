@@ -48,7 +48,8 @@ const getCustomer = async((req, res) => {
     data: {
       type: 'customer',
       attributes: {
-        name: customer.name,
+        firstname: customer.firstname,
+        lastname: customer.lastname,
         email: customer.email,
         addresses: customer.addresses
       },

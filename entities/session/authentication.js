@@ -57,6 +57,7 @@ const userPayload = (user) => {
     email: user.email,
     name: user.name,
     role: user.role,
+    id: user.id,
   };
 };
 

@@ -309,4 +309,12 @@ router.post('/:id', authMiddleware.admin, update);
 router.get('/:id/logs', authMiddleware.admin, getSpecificLogs);
 router.post('/:id/logs', authMiddleware.admin, createSpecificLogs);
 
-module.exports = router;
+module.exports = {
+  router: router,
+  get: get,
+  getSpecific: getSpecific,
+  add: add,
+  update: update,
+  getSpecificLogs: getSpecificLogs,
+  createSpecificLogs: createSpecificLogs
+};

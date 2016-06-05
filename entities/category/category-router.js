@@ -214,4 +214,10 @@ router.patch('/:id/relationships/parent', authMiddleware.admin, patchParentRel);
 router.get('/', getAll);
 router.delete('/:id', authMiddleware.admin, deleteCategory);
 
-module.exports = router;
+module.exports = {
+  router: router,
+  create: create,
+  patchParentRel: patchParentRel,
+  getAll: getAll,
+  deleteCategory: deleteCategory
+};

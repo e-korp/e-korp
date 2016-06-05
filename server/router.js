@@ -31,5 +31,9 @@ router.use(
   require('../entities/category/category-router').router
 );
 
+router.use(
+  '/customers',
+  require('../entities/customer/customer-router').router
+);
 
 module.exports = router;

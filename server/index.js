@@ -40,6 +40,9 @@ if (process.env.NODE_ENV === 'development') {
 // Extend Express framework
 require('./express-extend');
 
+// Handle CORS
+app.all('*', require('./middleware/cors'));
+
 // Middleware for parsing JSON bodies
 app.use(bodyParser.json({
   type: 'application/vnd.api+json'

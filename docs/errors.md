@@ -30,3 +30,16 @@ Temporary document for application error codes
 |----------|--------------------------|-----------------|
 |6001      |Could not add log entry   |Save query failed
 |6002      |Could not get log entries |Find query failed
+|6003      |Could not save log        |Save query failed
+
+
+### 6XXX - Watcher entity errors
+
+| **CODE** | **MESSAGE**                   | **DESCRIPTION** |
+|----------|-------------------------------|-----------------|
+|7001      |Could not get watchers         |Find query failed
+|7002      |Could not get watcher          |Find query failed
+|7003      |Could not get watcher          |The watcher was not found
+|7004      |Watcher with ID already exists |Watcher already existed
+|7005      |Could not add watcher          |Save query failed
+|7006      |Could not update watcher       |Save query failed

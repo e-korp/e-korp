@@ -30,7 +30,7 @@ const get = async((req, res) => {
   try {
     watchers = await(Watcher.find({}).exec());
   } catch (err) {
-    return res.oops(new Oops('Could not get watchers', 500, 5000, err));
+    return res.oops(new Oops('Could not get watchers', 500, 7001, err));
   }
 
   const responseData = [];
@@ -61,13 +61,13 @@ const getSpecific = async((req, res) => {
   let watcher = null;
 
   try {
-    watcher = await(Watcher.findOne(req.params.id).populate('logs').exec());
+    watcher = await(Watcher.findOne(req.params.id).exec());
   } catch (err) {
-    return res.oops(new Oops('Could not find watcher', 500, 5000, err));
+    return res.oops(new Oops('Could not get watcher', 500, 7002, err));
   }
 
   if (!watcher) {
-    return res.oops(new Oops('Could not find watcher', 404, 5000));
+    return res.oops(new Oops('Could not get watcher', 404, 7003));
   }
 
   const responseData = {
@@ -85,7 +85,7 @@ const getSpecific = async((req, res) => {
         data: watcher.logs.map(log => {
           return {
             type: 'log',
-            id: log.id
+            id: log
           };
         })
       }
@@ -100,37 +100,51 @@ const getSpecific = async((req, res) => {
  * Add new watcher
  */
 const add = async((req, res) => {
+  let name = null;
+  let description = null;
+  let id = null;
+
   try {
-    const watcher = new Watcher({
-      name: req.body.attributes.name,
-      description: req.body.attributes.description,
-      id: req.body.attributes.id
-    });
+    name = req.body.data.attributes.name;
+    description = req.body.data.attributes.description;
+    id = req.body.data.attributes.id;
+  } catch (err) {
+    return res.oops(new Oops('Required parameters is missing', 400, 4001, err));
+  }
 
+  const watcher = new Watcher({
+    name: name,
+    description: description,
+    id: id
+  });
+
+  try {
     await(watcher.save());
-
-    const responseData = {
-      data: {
-        type: 'watcher',
-        id: watcher.id,
-        attributes: {
-          name: watcher.name,
-          description: watcher.description,
-          state: watcher.state,
-          updatedAt: watcher.updatedAt,
-          createdAt: watcher.createdAt
-        }
-      }
-    };
-
-    res.status(201).reply(responseData);
   } catch (err) {
     if (err.code === 11000) {
-      return res.oops(new Oops('Watcher with ID already exists', 409, 5000, err));
+      return res.oops(
+        new Oops('Watcher with ID already exists', 409, 7004, err)
+      );
     }
 
-    return res.oops(new Oops('Could not add watcher', 500, 5000, err));
+    return res.oops(new Oops('Could not add watcher', 500, 7005, err));
   }
+
+  const responseData = {
+    data: {
+      type: 'watcher',
+      id: watcher.id,
+      attributes: {
+        name: watcher.name,
+        description: watcher.description,
+        state: watcher.state,
+        updatedAt: watcher.updatedAt,
+        createdAt: watcher.createdAt
+      }
+    }
+  };
+
+  res.status(201).reply(responseData);
 });
 
 /**
@@ -144,11 +158,11 @@ const update = async((req, res) => {
   try {
     watcher = await(Watcher.findOne(req.params.id));
   } catch (err) {
-    return res.oops(new Oops('Could not find watcher', 500, 5000, err));
+    return res.oops(new Oops('Could not get watcher', 500, 7002, err));
   }
 
   if (!watcher) {
-    return res.oops(new Oops('Could not find watcher', 404, 5000));
+    return res.oops(new Oops('Could not get watcher', 404, 7003));
   }
 
   // Gather attributes
@@ -161,7 +175,7 @@ const update = async((req, res) => {
     name = req.body.attributes.name;
     description = req.body.attributes.description;
   } catch (err) {
-    return res.oops(new Oops('Missing required parameters', 400, 5000, err));
+    return res.oops(new Oops('Required parameters is missing', 400, 4001, err));
   }
 
   // Check if the state has changed to trigger alarms
@@ -182,7 +196,11 @@ const update = async((req, res) => {
   watcher.description = description || watcher.description;
   watcher.state = state || watcher.state;
 
-  await(watcher.save());
+  try {
+    await(watcher.save());
+  } catch (err) {
+    return res.oops(new Oops('Could not update watcher', 500, 7006, err));
+  }
 
   const responseData = {
     data: {
@@ -210,11 +228,11 @@ const getSpecificLogs = async((req, res) => {
   try {
     watcher = await(Watcher.findOne(req.params.id).populate('logs').exec());
   } catch (err) {
-    return res.oops(new Oops('Could not find watcher', 500, 5000, err));
+    return res.oops(new Oops('Could not get watcher', 500, 7002, err));
   }
 
   if (!watcher) {
-    return res.oops(new Oops('Could not find watcher', 404, 5000));
+    return res.oops(new Oops('Could not get watcher', 404, 7003));
   }
 
   const responseData = watcher.logs.map(log => {
@@ -244,11 +262,11 @@ const createSpecificLogs = async((req, res) => {
   try {
     watcher = await(Watcher.findOne(req.params.id).populate('logs').exec());
   } catch (err) {
-    return res.oops(new Oops('Could not find watcher', 500, 5000, err));
+    return res.oops(new Oops('Could not get watcher', 500, 7002, err));
   }
 
   if (!watcher) {
-    return res.oops(new Oops('Could not find watcher', 404, 5000));
+    return res.oops(new Oops('Could not get watcher', 404, 7003));
   }
 
   // Try to construct the new logging object
@@ -263,16 +281,14 @@ const createSpecificLogs = async((req, res) => {
       data: req.body.attributes.data,
     });
   } catch (err) {
-    return res.status(400).reply(
-      new Oops('Required parameters missing', 400, 4001, err)
-    );
+    return res.oops(new Oops('Required parameters missing', 400, 4001, err));
   }
 
   // Save the log
   try {
     await(log.save());
   } catch (err) {
-    return res.oops(new Oops('Could not save log', 500, 5000, err));
+    return res.oops(new Oops('Could not save log', 500, 6003, err));
   }
 
   // Append the log
@@ -281,7 +297,7 @@ const createSpecificLogs = async((req, res) => {
   try {
     await(watcher.save());
   } catch (err) {
-    return res.oops(new Oops('Could not store log entry', 500, 5000, err));
+    return res.oops(new Oops('Could not update watcher', 500, 7006, err));
   }
 
   const responseData = {

@@ -14,8 +14,13 @@ Temporary document for application error codes
 
 | **CODE** | **MESSAGE**              | **DESCRIPTION** |
 |----------|--------------------------|-----------------|
-|5001      |                          |-                |
-|5002      |Unauthorized              |No token was provided in X-Access-Token                |5003      |Unauthorized              |Failed to decode the token
+|5000      |Could not create session  |Could not find user
+|5001      |Could not create session  |Find user query failed
+|5002      |Unauthorized              |No token was provided in X-Access-Token
+|5003      |Unauthorized              |Failed to decode the token
+|5003      |Could not create session  |Could not compare hashes
+|5004      |Could not create session  |Password did not match
+|5005      |Could not generate token  |Token generation with payload failed
 
 
 

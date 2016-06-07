@@ -23,5 +23,5 @@ Temporary document for application error codes
 
 | **CODE** | **MESSAGE**              | **DESCRIPTION** |
 |----------|--------------------------|-----------------|
-|6001      |Could not add log entry   |-                |
-|6002      |Could not get log entries |-                |
+|6001      |Could not add log entry   |Save query failed
+|6002      |Could not get log entries |Find query failed

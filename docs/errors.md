@@ -11,17 +11,20 @@ Temporary document for application error codes
 
 
 ### 5XXX - Session & Authentication errors
+###### 51xx - Admin middleware errors
 
 | **CODE** | **MESSAGE**              | **DESCRIPTION** |
 |----------|--------------------------|-----------------|
 |5000      |Could not create session  |Could not find user
 |5001      |Could not create session  |Find user query failed
 |5002      |Unauthorized              |No token was provided in X-Access-Token
-|5003      |Unauthorized              |Failed to decode the token
 |5003      |Could not create session  |Could not compare hashes
 |5004      |Could not create session  |Password did not match
 |5005      |Could not generate token  |Token generation with payload failed
-
+|5006      |Unauthorized              |No X-Access-Token provided
+|5007      |Unauthorized              |Failed to decode the token
+|5100      |Unauthorized              |User role was not present in token
+|5101      |Unauthorized              |User role was not admin
 
 
 ### 6XXX - Log entity errors

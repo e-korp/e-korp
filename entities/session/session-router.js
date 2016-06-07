@@ -40,7 +40,7 @@ const create = async((req, res) => {
     )[0];
 
     if (!user) {
-      throw new Error('Could not find user');
+      return res.oops(new Oops('Could not create session', 403, 5000));
     }
   } catch (err) {
     return res.oops(new Oops('Could not create session', 403, 5001, err));
@@ -52,9 +52,8 @@ const create = async((req, res) => {
   try {
     passwordMatch = await(Auth.compareHash(user.password, password));
   } catch (err) {
-    // TODO: Consistency is key
     return res.oops(
-      new Oops('Invalid authentication credentials', 403, 5003, err)
+      new Oops('Could not create session', 403, 5003, err)
     );
   }
 

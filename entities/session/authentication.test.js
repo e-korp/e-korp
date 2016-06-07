@@ -21,6 +21,7 @@ describe('Authentication', () => {
       const res = Auth.userPayload({
         email: 'Testemail',
         name: 'Testname',
+        id: 'test',
         role: 1,
         password: 'Should not be in the payload',
       });
@@ -28,6 +29,7 @@ describe('Authentication', () => {
       expect(res).to.deep.equal({
         email: 'Testemail',
         name: 'Testname',
+        id: 'test',
         role: 1,
       });
     });

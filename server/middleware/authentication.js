@@ -15,7 +15,7 @@ const authenticateJWT = async((req, res, next) => {
   // Check if the token header
   if (!token) {
     applog.verbose('User did not have X-Access-Token header');
-    return next(new Oops('Unauthorized', 403, 5000));
+    return res.oops(new Oops('Unauthorized', 403, 5006));
   }
 
   let payload = null;
@@ -24,13 +24,13 @@ const authenticateJWT = async((req, res, next) => {
     payload = await(Auth.validateJwt(token));
   } catch (err) {
     applog.verbose('User token was invalid');
-    return next(new Oops('Unauthorized', 403, 5000, err));
+    return res.oops(new Oops('Unauthorized', 403, 5007, err));
   }
 
   // Append the payload to the request object for access later on
   req.user = payload;
 
-  next(null, req, res);
+  next();
 });
 
 /**
@@ -44,11 +44,11 @@ const admin = async((req, res, next) => {
     try {
       role = req.user.role;
     } catch (err) {
-      return next(new Oops('Unauthorized', 403, 5000, err));
+      return next(new Oops('Unauthorized', 403, 5100, err));
     }
 
     if (role !== userRoles.ROLES.ADMIN) {
-      return next(new Oops('Unauthorized', 403, 5001));
+      return next(new Oops('Unauthorized', 403, 5101));
     }
 
     return next();

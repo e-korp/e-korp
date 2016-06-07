@@ -6,10 +6,10 @@ const applog = require('winston').loggers.get('applog');
  */
 applog.verbose('Mounting routers');
 
-router.use(
-  '/users',
-  require('../entities/user/user-router').router
-);
+// router.use(
+//   '/users',
+//   require('../entities/user/user-router').router
+// );
 
 router.use(
   '/sessions',
@@ -26,14 +26,14 @@ router.use(
   require('../entities/watcher/watcher-router').router
 );
 
-router.use(
-  '/categories',
-  require('../entities/category/category-router').router
-);
+// router.use(
+//   '/categories',
+//   require('../entities/category/category-router').router
+// );
 
-router.use(
-  '/customers',
-  require('../entities/customer/customer-router').router
-);
+// router.use(
+//   '/customers',
+//   require('../entities/customer/customer-router').router
+// );
 
 module.exports = router;

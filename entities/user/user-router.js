@@ -26,10 +26,10 @@ const create = async((req, res) => {
   let name = null;
 
   try {
-    email = req.body.attributes.email;
-    password = req.body.attributes.password;
-    role = req.body.attributes.role;
-    name = req.body.attributes.name;
+    email = req.body.data.attributes.email;
+    password = req.body.data.attributes.password;
+    role = req.body.data.attributes.role;
+    name = req.body.data.attributes.name;
   } catch (err) {
     return res.oops(new Oops('Required parameters missing', 400, 4001, err));
   }
@@ -62,7 +62,7 @@ const create = async((req, res) => {
   // Write response
   return res.status(201).reply({
     data: {
-      type: 'user',
+      type: 'users',
       id: newUser.id,
       attributes: {
         email: newUser.email,
@@ -84,4 +84,4 @@ router.post('/', authMiddleware.admin, create);
 module.exports = {
   router: router,
   create: create,
-}
+};

@@ -17,12 +17,14 @@ express.response.oops = function(oops) {
   this.header('Content-Type', 'application/vnd.api+json');
   this.status(oops.httpCode || 500);
 
+  const meta = process.env.NODE_ENV === 'development' ? oops.error : null;
+
   return this.json({
     errors: [{
       status: `${oops.httpCode || 500}`,
       code: `${oops.code}`,
       title: oops.message,
-      meta: oops.error
+      meta: meta
     }],
   });
 };

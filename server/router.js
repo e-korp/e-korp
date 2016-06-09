@@ -26,6 +26,11 @@ router.use(
   require('../entities/watcher/watcher-router').router
 );
 
+router.use(
+  '/candidates',
+  require('../entities/candidate/candidate-router').router
+);
+
 // router.use(
 //   '/categories',
 //   require('../entities/category/category-router').router

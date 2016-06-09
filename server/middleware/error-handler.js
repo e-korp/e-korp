@@ -15,13 +15,15 @@ module.exports = (oops, req, res, next) => {
   if (oops) {
     applog.error(oops);
 
+    const meta = process.env.NODE_ENV === 'development' ? oops.error : null;
+
     res.status(oops.httpCode || 500);
     return res.json({
       errors: [{
         status: `${oops.httpCode || 500}`,
         code: `${oops.code}`,
         title: oops.message,
-        meta: oops.error
+        meta: meta
       }],
     });
   }

@@ -36,7 +36,7 @@ Temporary document for application error codes
 |6003      |Could not save log        |Save query failed
 
 
-### 6XXX - Watcher entity errors
+### 7XXX - Watcher entity errors
 
 | **CODE** | **MESSAGE**                   | **DESCRIPTION** |
 |----------|-------------------------------|-----------------|
@@ -46,3 +46,13 @@ Temporary document for application error codes
 |7004      |Watcher with ID already exists |Watcher already existed
 |7005      |Could not add watcher          |Save query failed
 |7006      |Could not update watcher       |Save query failed
+
+
+### 8XXX - Candidate entity errors
+
+| **CODE** | **MESSAGE**              | **DESCRIPTION** |
+|----------|--------------------------|-----------------|
+|8001      |Could not add candidate   |Save query failed (possibly invalid email)
+|8002      |Could not get candidates  |Find query failed
+|8003      |Could not save candidate  |Save query failed
+|8004      |Could not save candidate  |Candidate with this email already exists

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const goredis = require('../../lib/goredis');
 const validator = require('validator');
 
 /**
@@ -21,7 +20,9 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     trim: true,
-    validate: [(email) => {validator.isEmail(email);}, 'Invalid email address'],
+    validate: [(email) => {
+      return validator.isEmail(email);
+    }, 'Invalid email address'],
   },
   password: {
     type: String,
@@ -34,8 +35,5 @@ const userSchema = new mongoose.Schema({
     max: 50,
   },
 }, options);
-
-// Attach Redis cache to the model
-// userSchema.plugin(goredis);
 
 module.exports = mongoose.model('User', userSchema);

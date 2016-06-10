@@ -10,7 +10,7 @@ const states = require('./states');
 // Use pager duty for alarms
 const PagerDuty = require('pagerduty');
 const pager = new PagerDuty({
-  serviceKey: '12345678901234567890123456789012',
+  serviceKey: 'df4d7898387e4b4d956bd1bbac1203c4',
 });
 
 // Error handling and logging
@@ -44,6 +44,7 @@ const get = async((req, res) => {
           name: watcher.name,
           description: watcher.description,
           state: watcher.state,
+          pgKey: watcher.pgKey,
           updatedAt: watcher.updatedAt,
           createdAt: watcher.createdAt
         }
@@ -78,6 +79,7 @@ const getSpecific = async((req, res) => {
         name: watcher.name,
         description: watcher.description,
         state: watcher.state,
+        pgKey: watcher.pgKey,
         updatedAt: watcher.updatedAt,
         createdAt: watcher.createdAt,
       },
@@ -102,11 +104,13 @@ const getSpecific = async((req, res) => {
 const add = async((req, res) => {
   let name = null;
   let description = null;
+  let pgKey = null;
   let id = null;
 
   try {
     name = req.body.data.attributes.name;
     description = req.body.data.attributes.description;
+    pgKey = req.body.data.attributes.pgKey;
     id = req.body.data.attributes.id;
   } catch (err) {
     return res.oops(new Oops('Required parameters is missing', 400, 4001, err));
@@ -115,6 +119,7 @@ const add = async((req, res) => {
   const watcher = new Watcher({
     name: name,
     description: description,
+    pgKey: pgKey,
     id: id
   });
 
@@ -138,6 +143,7 @@ const add = async((req, res) => {
         name: watcher.name,
         description: watcher.description,
         state: watcher.state,
+        pgKey: watcher.pgKey,
         updatedAt: watcher.updatedAt,
         createdAt: watcher.createdAt
       }
@@ -169,11 +175,13 @@ const update = async((req, res) => {
   let state = null;
   let name = null;
   let description = null;
+  let pgKey = null;
 
   try {
     state = req.body.data.attributes.state;
     name = req.body.data.attributes.name;
     description = req.body.data.attributes.description;
+    pgKey = req.body.data.attributes.pgKey;
   } catch (err) {
     return res.oops(new Oops('Required parameters is missing', 400, 4001, err));
   }
@@ -196,6 +204,7 @@ const update = async((req, res) => {
   // Change values if provided
   watcher.name = name || watcher.name;
   watcher.description = description || watcher.description;
+  watcher.pgKey = pgKey || watcher.pgKey;
   watcher.state = (state !== null && typeof state !== 'undefined') ?
     state : watcher.state;
 
@@ -213,6 +222,7 @@ const update = async((req, res) => {
         name: watcher.name,
         description: watcher.description,
         state: watcher.state,
+        pgKey: watcher.pgKey,
         updatedAt: watcher.updatedAt,
         createdAt: watcher.createdAt
       }

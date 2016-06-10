@@ -9,6 +9,9 @@ const schema = new mongoose.Schema({
   description: {
     type: String,
   },
+  pgKey: {
+    type: String,
+  },
   id: {
     type: String,
     required: true,

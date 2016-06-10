@@ -61,7 +61,7 @@ const getSpecific = async((req, res) => {
   let watcher = null;
 
   try {
-    watcher = await(Watcher.findOne(req.params.id).exec());
+    watcher = await(Watcher.findOne({id: req.params.id}).exec());
   } catch (err) {
     return res.oops(new Oops('Could not get watcher', 500, 7002, err));
   }
@@ -156,7 +156,7 @@ const update = async((req, res) => {
   let watcher = null;
 
   try {
-    watcher = await(Watcher.findOne(req.params.id));
+    watcher = await(Watcher.findOne({id: req.params.id}));
   } catch (err) {
     return res.oops(new Oops('Could not get watcher', 500, 7002, err));
   }
@@ -171,15 +171,15 @@ const update = async((req, res) => {
   let description = null;
 
   try {
-    state = req.body.attributes.state;
-    name = req.body.attributes.name;
-    description = req.body.attributes.description;
+    state = req.body.data.attributes.state;
+    name = req.body.data.attributes.name;
+    description = req.body.data.attributes.description;
   } catch (err) {
     return res.oops(new Oops('Required parameters is missing', 400, 4001, err));
   }
 
   // Check if the state has changed to trigger alarms
-  if (state) {
+  if (state !== null && typeof state !== 'undefined') {
     if (watcher.state === states.OK && state !== states.OK) {
       // Watcher entered failed state
       applog.info(`Watcher ${watcher.id} entered failed state`);
@@ -191,10 +191,13 @@ const update = async((req, res) => {
     }
   }
 
+  console.log(watcher);
+
   // Change values if provided
   watcher.name = name || watcher.name;
   watcher.description = description || watcher.description;
-  watcher.state = state || watcher.state;
+  watcher.state = (state !== null && typeof state !== 'undefined') ?
+    state : watcher.state;
 
   try {
     await(watcher.save());
@@ -204,7 +207,7 @@ const update = async((req, res) => {
 
   const responseData = {
     data: {
-      type: 'watcher',
+      type: 'watchers',
       id: watcher.id,
       attributes: {
         name: watcher.name,
@@ -226,7 +229,12 @@ const getSpecificLogs = async((req, res) => {
   let watcher = null;
 
   try {
-    watcher = await(Watcher.findOne(req.params.id).populate('logs').exec());
+    watcher = await(
+      Watcher
+      .findOne({id: req.params.id})
+      .populate('logs')
+      .exec()
+    );
   } catch (err) {
     return res.oops(new Oops('Could not get watcher', 500, 7002, err));
   }
@@ -238,7 +246,7 @@ const getSpecificLogs = async((req, res) => {
   const responseData = watcher.logs.map(log => {
     return {
       data: {
-        type: 'log',
+        type: 'logs',
         attributes: {
           title: log.title,
           description: log.description,
@@ -260,7 +268,7 @@ const createSpecificLogs = async((req, res) => {
   let watcher = null;
 
   try {
-    watcher = await(Watcher.findOne(req.params.id).populate('logs').exec());
+    watcher = await(Watcher.findOne({id: req.params.id}).exec());
   } catch (err) {
     return res.oops(new Oops('Could not get watcher', 500, 7002, err));
   }
@@ -274,11 +282,11 @@ const createSpecificLogs = async((req, res) => {
 
   try {
     log = new Log({
-      title: req.body.attributes.title,
-      description: req.body.attributes.description,
-      stackTrace: req.body.attributes.stackTrace || {},
-      level: req.body.attributes.level,
-      data: req.body.attributes.data,
+      title: req.body.data.attributes.title,
+      description: req.body.data.attributes.description,
+      stackTrace: req.body.data.attributes.stackTrace || {},
+      level: req.body.data.attributes.level,
+      data: req.body.data.attributes.data,
     });
   } catch (err) {
     return res.oops(new Oops('Required parameters missing', 400, 4001, err));

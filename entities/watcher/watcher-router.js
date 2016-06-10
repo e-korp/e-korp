@@ -5,17 +5,10 @@ const await = require('asyncawait/await');
 // Import the model
 const Watcher = require('./watcher-model');
 const Log = require('../log/log-model');
-const states = require('./states');
-
-// Use pager duty for alarms
-const PagerDuty = require('pagerduty');
-const pager = new PagerDuty({
-  serviceKey: 'df4d7898387e4b4d956bd1bbac1203c4',
-});
 
 // Error handling and logging
 const Oops = require('../../lib/oops');
-const applog = require('winston').loggers.get('applog');
+// const applog = require('winston').loggers.get('applog');
 
 // Middleware
 const authMiddleware = require('../../server/middleware/authentication');
@@ -185,21 +178,6 @@ const update = async((req, res) => {
   } catch (err) {
     return res.oops(new Oops('Required parameters is missing', 400, 4001, err));
   }
-
-  // Check if the state has changed to trigger alarms
-  if (state !== null && typeof state !== 'undefined') {
-    if (watcher.state === states.OK && state !== states.OK) {
-      // Watcher entered failed state
-      applog.info(`Watcher ${watcher.id} entered failed state`);
-    }
-
-    if (watcher.state !== states.OK && state === states.OK) {
-      // Watcher recovered from failed state
-      applog.info(`Watcher ${watcher.id} recovered from fail-state`);
-    }
-  }
-
-  console.log(watcher);
 
   // Change values if provided
   watcher.name = name || watcher.name;

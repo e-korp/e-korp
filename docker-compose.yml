@@ -15,8 +15,6 @@ app:
 mongo:
   image: mongo:3.0.2
   command: "/usr/bin/mongod --smallfiles"
-  volumes:
-    - ./data:/data/db
 
 redis:
   image: redis

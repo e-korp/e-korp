@@ -15,8 +15,4 @@ ADD . /var/www/ekorp
 # Install PM2
 RUN npm install -g pm2
 
-# Install debugger server
-#RUN npm install -g node-inspector
-
-#COPY ./docker/docker-entrypoint.sh /docker-entrypoint.sh
 CMD ["bash", "/var/www/ekorp/docker/docker-entrypoint.sh"]

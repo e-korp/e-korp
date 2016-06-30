@@ -3,7 +3,7 @@ app:
   dockerfile: ./docker/Dockerfile.web
   environment:
     PORT: 3001
-    NODE_ENV: development
+    NODE_ENV: production
   links:
     - mongo
     - redis

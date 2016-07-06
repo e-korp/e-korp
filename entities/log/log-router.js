@@ -41,7 +41,7 @@ const create = async((req, res) => {
       return res.oops(
         new Oops(
           'Couldnt add log entry: ' + JSON.stringify(err),
-          500,
+          400,
           6001,
           err
         )

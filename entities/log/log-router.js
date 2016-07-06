@@ -37,6 +37,17 @@ const create = async((req, res) => {
   try {
     await(log.save());
   } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res.oops(
+        new Oops(
+          'Couldnt add log entry: ' + JSON.stringify(err),
+          500,
+          6001,
+          err
+        )
+      );
+    }
+
     return res.oops(new Oops('Could not add log entry', 500, 6001, err));
   }
 

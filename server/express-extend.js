@@ -20,7 +20,7 @@ express.response.oops = function(oops) {
 
   // Log errors in production
   if (oops.error && process.env.NODE_ENV === 'production') {
-    applog.error(oops.error);
+    applog.error('Oops error handler', oops.error);
   }
 
   const meta = process.env.NODE_ENV === 'development' ? oops.error : null;

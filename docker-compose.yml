@@ -6,7 +6,7 @@ app:
     NODE_ENV: production
   links:
     - mongo
-    - redis
+#    - redis
   ports:
     - "3001:3001"
   volumes:
@@ -16,8 +16,8 @@ mongo:
   image: mongo:3.3
   command: "/usr/bin/mongod --smallfiles"
 
-redis:
-  image: redis
+#redis:
+#  image: redis
 
 nginx:
   image: nginx:1.9

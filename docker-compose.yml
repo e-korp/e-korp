@@ -13,7 +13,7 @@ app:
     - .:/var/www/ekorp
 
 mongo:
-  image: mongo:3.0.2
+  image: mongo:3.3
   command: "/usr/bin/mongod --smallfiles"
 
 redis:

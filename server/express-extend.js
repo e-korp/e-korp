@@ -3,6 +3,7 @@
  */
 
 const express = require('express');
+const applog = require('winston').loggers.get('applog');
 
 /**
  * Add oops method to the response object for easy error handling. This writes
@@ -16,6 +17,11 @@ express.response.oops = function(oops) {
 
   this.header('Content-Type', 'application/vnd.api+json');
   this.status(oops.httpCode || 500);
+
+  // Log errors in production
+  if (oops.error && process.env.NODE_ENV === 'production') {
+    applog.error(oops.error);
+  }
 
   const meta = process.env.NODE_ENV === 'development' ? oops.error : null;
 
